@@ -1,0 +1,1681 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- flow-rebuild template (Growth Audit, v3: + walkthrough video, phone view/QR, localization, paywall today vs proposed). Replace every double-brace placeholder, everything between
+     the SCREENS markers, and the CONTENT json. Rules that brand-check.py enforces are marked RULE.
+     Reference builds: eddieatadapty.github.io/datacamp-flow-rebuild-v2 · bterzic123.github.io/planner5d-flow-rebuild-v2 -->
+<title>Tomplay Growth Audit</title>
+<meta name="description" content="Five ideas to turn more Tomplay users into subscribers, each built into a clickable version of Tomplay's own onboarding. Prepared by Adapty.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- the APP's font (brand.json fonts, or the closest Google family) + a mono if the app shows code -->
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* BRAND:START — the only place the APP's colours are written as literals. RULE: every value here is
+   copied from brand.json / a sampled pixel of the app's own screens; never "improved". Used only inside the phone. */
+:root{
+  --b-primary:#e82076;      /* tomplay.com buttons + headings */
+  --b-primary-ink:#ffffff;
+  --b-bg:#ffffff;           /* in-app screens are white */
+  --b-surface:#f9f9f9;      /* tomplay.com light surface */
+  --b-ink:#282828;          /* tomplay.com text */
+  --b-ink2:#6c6d6c;         /* sampled: secondary text on their screens */
+  --b-line:#eeeeee;         /* tomplay.com borders */
+  --b-accent2:#f9deea;      /* tomplay.com light-pink chips */
+  --b-soft:#fae9ef;         /* sampled: selected chip on their level picker */
+  --b-pink:#e62075;         /* sampled: listing / welcome pink */
+  --b-blue:#c4d5e4;         /* sampled: the pale blue circle on their screenshots */
+  --b-grad:linear-gradient(180deg,#fae9ef,#ffffff);
+  --b-radius:16px;          /* instrument tiles */
+  --b-pill:999px;           /* tomplay.com buttons (768px radius) */
+  --b-font:'Source Sans 3','Source Sans Pro',-apple-system,system-ui,sans-serif;
+  --b-mono:ui-monospace,monospace;
+}
+/* BRAND:END */
+/* A second app family (e.g. a mono for code) is applied HERE, never in SCREENS css (brand-check allows only
+   var(--b-font) there). Prefix with .scr so it beats the screens' font shorthands, e.g.:
+   .scr .code,.scr .instr code{font-family:var(--b-mono)} */
+
+/* ================= the audit page — Adapty's, not the app's. Light, Apple-style. ================= */
+:root{
+  color-scheme:light;
+  --st-ground:#f5f5f7; --st-card:#ffffff; --st-ink:#1d1d1f; --st-ink2:#6e6e73; --st-ink3:#86868b;
+  --st-hair:rgba(0,0,0,.09); --st-link:#0066cc;
+  --st-accent:#201d1d;      /* dark brand colour of the APP: buttons, the outcome band */
+  --st-hi:#e82076;          /* bright brand colour of the APP: outcome numbers on the band, idea dots */
+  --st-mark:rgba(232,32,118,.32); /* --st-hi at ~.5 alpha: the highlighter under impact numbers */
+  --st-font:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+html,body{margin:0}
+body{background:var(--st-ground);color:var(--st-ink);font-family:var(--st-font);-webkit-font-smoothing:antialiased;font-size:17px;line-height:1.47}
+.au-wrap{max-width:1080px;margin:0 auto;padding-inline:22px}
+a{color:var(--st-link)}
+button{font-family:inherit}
+:focus-visible{outline:2px solid var(--st-link);outline-offset:3px;border-radius:6px}
+mark{background:linear-gradient(transparent 62%,var(--st-mark) 62%,var(--st-mark) 92%,transparent 92%);color:inherit;padding:0 .04em}
+
+/* nav */
+.au-nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:rgba(245,245,247,.8);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid var(--st-hair)}
+.au-nav-in{max-width:1080px;margin:0 auto;padding-inline:22px;height:52px;display:flex;align-items:center;gap:26px}
+.au-brand{display:flex;align-items:center;gap:10px;margin-right:auto;min-width:0}
+.au-brand img{width:26px;height:26px;border-radius:7px;flex:none}
+.au-brand span{font-size:15px;font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+.au-brand small{font-size:15px;font-weight:400;color:var(--st-ink2)}
+.au-nav a{font-size:13px;color:var(--st-ink);text-decoration:none;opacity:.82}
+.au-nav a:hover{opacity:1}
+@media (max-width:560px){.au-nav a.au-opt{display:none}.au-brand small{display:none}}
+
+/* hero */
+.au-top-hero{text-align:center;padding-top:clamp(56px,9vw,96px);overflow:hidden;position:relative}
+.au-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--st-ink);margin:0 0 14px}
+.au-eyebrow i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-display{font-size:clamp(60px,12vw,120px);line-height:.98;font-weight:700;letter-spacing:-.05em;margin:0}
+.au-lede{font-size:clamp(23px,3.4vw,34px);line-height:1.16;font-weight:600;letter-spacing:-.022em;max-width:760px;margin:22px auto 0;text-wrap:balance}
+.au-lede span{color:var(--st-ink2)}
+.au-byline{font-size:14px;color:var(--st-ink3);margin:18px 0 0}
+.au-ctas{display:flex;gap:26px;justify-content:center;align-items:center;margin-top:30px;flex-wrap:wrap}
+.au-btn{display:inline-block;background:var(--st-accent);color:#fff;border-radius:980px;padding:12px 23px;font-size:17px;font-weight:500;text-decoration:none;border:0;cursor:pointer}
+.au-btn:hover{filter:brightness(1.25)}
+.au-lnk{background:none;border:0;padding:0;color:var(--st-link);font-size:17px;text-decoration:none;cursor:pointer}
+.au-lnk::after{content:"\00a0›"}
+.au-lnk:hover{text-decoration:underline}
+.au-phones{display:flex;justify-content:center;align-items:flex-start;margin-top:clamp(40px,6vw,64px);height:clamp(300px,52vw,560px)}
+.au-hp{flex:none;border:0;padding:0;background:none;cursor:pointer;width:27%;max-width:290px;margin:0 -2.5%;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.au-hp img{display:block;width:100%;height:auto;filter:drop-shadow(0 28px 50px rgba(0,0,0,.2))}
+.au-hp.au-c{width:31%;max-width:330px;z-index:2}
+.au-hp.au-l{transform:translateY(12%) rotate(-5deg)}
+.au-hp.au-r{transform:translateY(12%) rotate(5deg)}
+.au-hp.au-l:hover{transform:translateY(9%) rotate(-5deg)}.au-hp.au-r:hover{transform:translateY(9%) rotate(5deg)}.au-hp.au-c:hover{transform:translateY(-3%)}
+
+/* sections */
+.au-sec{padding-block:clamp(72px,10vw,120px)}
+.au-sec.au-white{background:var(--st-card)}
+.au-kicker{font-size:15px;font-weight:600;color:var(--st-ink2);margin:0 0 12px}
+.au-h2{font-size:clamp(34px,5.2vw,56px);line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:0;text-wrap:balance}
+.au-h2 span{color:var(--st-ink3)}
+.au-split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(28px,6vw,80px);align-items:end}
+.au-split p{margin:0;font-size:clamp(17px,1.7vw,21px);line-height:1.45;color:var(--st-ink2);letter-spacing:-.01em}
+.au-split p b{color:var(--st-ink);font-weight:600}
+.au-split p + p{margin-top:16px}
+.au-stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:clamp(48px,7vw,80px);border-top:1px solid var(--st-hair)}
+.au-stat{padding:28px 20px 0 0}
+.au-stat b{display:block;font-size:clamp(40px,5.5vw,64px);font-weight:700;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums}
+.au-stat span{display:block;font-size:15px;color:var(--st-ink2);margin-top:10px;max-width:22ch}
+.au-notes{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,40px);margin-top:clamp(48px,7vw,72px)}
+.au-note h3{font-size:19px;font-weight:600;letter-spacing:-.015em;margin:0 0 8px}
+.au-note p{margin:0;font-size:15.5px;line-height:1.5;color:var(--st-ink2)}
+.au-note .au-ic{width:36px;height:36px;border-radius:10px;background:var(--st-ground);display:grid;place-items:center;margin-bottom:16px}
+.au-note .au-ic svg{width:19px;height:19px;stroke:var(--st-accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ideas */
+.au-ideas-h{margin-bottom:clamp(32px,5vw,48px)}
+.au-list{background:var(--st-card);border-radius:28px;padding-inline:clamp(20px,4vw,44px)}
+.au-idea{display:grid;grid-template-columns:56px 1fr 220px;gap:20px;align-items:start;padding-block:clamp(26px,3.5vw,36px);border-top:1px solid var(--st-hair)}
+.au-idea:first-child{border-top:0}
+.au-idea .au-num{font-size:15px;font-weight:600;color:var(--st-ink3);font-variant-numeric:tabular-nums;padding-top:6px}
+.au-idea h3{font-size:clamp(21px,2.4vw,26px);line-height:1.2;font-weight:600;letter-spacing:-.022em;margin:0 0 8px}
+.au-idea p{margin:0 0 12px;font-size:17px;line-height:1.5;color:var(--st-ink2);max-width:58ch}
+.au-idea p code{font:600 15px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--st-ink);background:var(--st-ground);padding:2px 7px;border-radius:6px}
+.au-idea .au-lnk{font-size:15px}
+.au-imp{text-align:right}
+.au-imp .au-v{font-size:clamp(30px,3.6vw,40px);font-weight:700;letter-spacing:-.035em;line-height:1;font-variant-numeric:tabular-nums;color:var(--st-accent)}
+.au-imp .au-l{font-size:13.5px;color:var(--st-ink2);margin-top:8px}
+.au-band{margin-top:20px;background:var(--st-accent);color:#fff;border-radius:28px;padding:clamp(32px,5vw,56px);display:grid;grid-template-columns:1fr auto;gap:clamp(28px,5vw,64px);align-items:center}
+.au-band .au-k{font-size:15px;font-weight:600;color:rgba(255,255,255,.62);margin:0 0 10px}
+.au-band h3{font-size:clamp(24px,3vw,32px);line-height:1.18;font-weight:600;letter-spacing:-.022em;margin:0;text-wrap:balance}
+.au-band .au-fn{font-size:13px;line-height:1.5;color:rgba(255,255,255,.55);margin:16px 0 0;max-width:52ch}
+.au-nums{display:flex;gap:clamp(28px,4vw,48px)}
+.au-nums small{display:block;font-size:13px;color:rgba(255,255,255,.62)}
+.au-nums b{display:block;font-size:clamp(48px,6.5vw,76px);font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-hi);font-variant-numeric:tabular-nums;margin:4px 0 8px}
+.au-nums span{font-size:14px;color:rgba(255,255,255,.8)}
+.au-band .au-btn{background:var(--st-hi);color:var(--st-accent);font-weight:600;margin-top:26px}
+
+/* prototype */
+.au-proto-h{text-align:center;max-width:720px;margin:0 auto}
+.au-proto-h p{font-size:clamp(17px,1.7vw,21px);color:var(--st-ink2);margin:14px 0 0}
+.au-seg{display:flex;gap:4px;justify-content:center;margin:clamp(28px,4vw,40px) auto 0;padding:4px;background:var(--st-ground);border-radius:980px;width:max-content;max-width:100%;overflow-x:auto;scrollbar-width:none}
+.au-seg::-webkit-scrollbar{display:none}
+.au-chip{flex:none;display:inline-flex;align-items:center;gap:6px;background:none;border:0;color:var(--st-ink2);font-size:13.5px;font-weight:500;padding:8px 14px;border-radius:980px;cursor:pointer;white-space:nowrap}
+.au-chip:hover{color:var(--st-ink)}
+.au-chip.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.au-chip i{font-style:normal;font-size:11px;font-weight:700;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:var(--st-hi);color:var(--st-accent)}
+.au-stage{display:grid;grid-template-columns:auto minmax(0,420px);gap:clamp(32px,6vw,72px);justify-content:center;align-items:center;margin-top:clamp(28px,4vw,44px)}
+.phone{width:390px;height:844px;border-radius:56px;padding:10px;background:#0b0d10;box-shadow:0 0 0 1.5px #3a3d42,0 40px 90px rgba(0,0,0,.25);max-width:calc(100vw - 44px)}
+.phone-in{position:relative;width:100%;height:100%;border-radius:46px;overflow:hidden;background:var(--b-bg)}
+.island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:34px;border-radius:20px;background:#000;z-index:9}
+.sbar{position:absolute;top:0;left:0;right:0;height:52px;display:flex;justify-content:space-between;align-items:center;padding:4px 32px 0;font:600 15px -apple-system,system-ui,sans-serif;color:var(--b-ink);z-index:8;pointer-events:none}
+.au-pn{background:var(--st-ground);border-radius:28px;padding:clamp(26px,3.5vw,38px)}
+.au-pn-k{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;color:var(--st-ink)}
+.au-pn-k i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-pn-k.au-ctx{color:var(--st-ink2)}.au-pn-k.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-pn-t{font-size:clamp(24px,2.6vw,30px);line-height:1.12;font-weight:700;letter-spacing:-.028em;margin:10px 0 14px;text-wrap:balance}
+.au-pn-h{margin:0;font-size:17px;line-height:1.55;color:var(--st-ink2)}
+.au-pn-h b{color:var(--st-ink);font-weight:600}
+.au-pn-o{margin-top:24px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-pn-o .au-lab{font-size:13px;font-weight:600;color:var(--st-ink3)}
+.au-pn-o .au-val{font-size:clamp(38px,4.4vw,50px);font-weight:700;letter-spacing:-.04em;line-height:1.05;color:var(--st-accent);margin-top:6px;font-variant-numeric:tabular-nums}
+.au-pn-o .au-sub{font-size:14px;color:var(--st-ink2);margin-top:4px}
+.au-pn-a{margin:18px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-pn-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:28px;padding-top:18px;border-top:1px solid var(--st-hair);font-size:13px;color:var(--st-ink3)}
+.au-pn-nav button{background:var(--st-card);border:0;border-radius:980px;padding:8px 15px;font-size:14px;font-weight:500;color:var(--st-ink);cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.au-pn-nav button:disabled{opacity:.35;cursor:default}
+.au-hint{text-align:center;font-size:14px;color:var(--st-ink3);margin:22px 0 0}
+
+/* footer */
+.au-foot{padding-block:56px 72px;border-top:1px solid var(--st-hair)}
+.au-foot details{border-bottom:1px solid var(--st-hair);padding-bottom:18px}
+.au-foot summary{cursor:pointer;font-size:17px;font-weight:600;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.au-foot summary::-webkit-details-marker{display:none}
+.au-foot summary::after{content:"+";font-size:24px;font-weight:300;color:var(--st-ink2)}
+.au-foot details[open] summary::after{content:"−"}
+.au-srcs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 48px;margin-top:18px}
+.au-srcs h4{font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--st-ink3);margin:18px 0 6px}
+.au-srcs dl{margin:0}.au-srcs dt{font-size:14.5px;font-weight:600;margin-top:10px}
+.au-srcs dd{margin:3px 0 0;font-size:14px;line-height:1.5;color:var(--st-ink2)}
+.au-fine{font-size:12.5px;line-height:1.6;color:var(--st-ink3);margin:22px 0 0;max-width:80ch}
+.au-cta-line{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:36px}
+.au-cta-line p{margin:0;font-size:clamp(19px,2.2vw,24px);font-weight:600;letter-spacing:-.02em;max-width:34ch}
+
+@media (max-width:900px){
+  .au-split,.au-band{grid-template-columns:1fr}
+  .au-notes{grid-template-columns:1fr}
+  .au-idea{grid-template-columns:40px 1fr}
+  .au-imp{grid-column:2;text-align:left;display:flex;align-items:baseline;gap:10px}
+  .au-imp .au-l{margin:0}
+  .au-imp .au-v{white-space:nowrap}
+  .au-stage{grid-template-columns:1fr;justify-items:center}
+  .au-pn{width:100%;max-width:520px}
+  .au-srcs{grid-template-columns:1fr}
+}
+@media (max-width:560px){.au-stats{grid-template-columns:1fr}.au-stat{padding:22px 0 0}.au-nums{flex-direction:column;gap:18px}}
+
+/* ================= extras (audit side): video, language, phone view + QR, paywall today vs proposed, ?tour ================= */
+[hidden]{display:none!important}
+/* the device never scrolls: off-screen slides would otherwise make it scrollable by focus / scrollIntoView */
+.phone-in,.scr{overflow:clip}
+/* hero: walkthrough link */
+.au-play::before{content:"▶";font-size:.72em;margin-right:7px;position:relative;top:-1px}
+/* video dialog */
+.au-vid{border:0;padding:0;background:transparent;max-width:min(1120px,94vw);width:100%;overflow:visible}
+.au-vid::backdrop{background:rgba(0,0,0,.74);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.au-vid-in{background:#000;border-radius:18px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.au-vid video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.au-vid-bar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 4px 0;font-size:14px}
+.au-vid-bar a{color:#fff;opacity:.85}
+.au-vid-x{background:rgba(255,255,255,.16);border:0;color:#fff;border-radius:980px;padding:8px 16px;font-size:14px;cursor:pointer}
+/* language switch */
+.au-langrow{display:flex;justify-content:center;align-items:center;gap:12px;margin:18px 0 0;font-size:13.5px;color:var(--st-ink2);flex-wrap:wrap}
+.au-lsw{display:inline-flex;gap:2px;padding:3px;background:var(--st-ground);border-radius:980px}
+.au-lsw button{border:0;background:none;padding:6px 13px;border-radius:980px;font-size:13.5px;font-weight:500;color:var(--st-ink2);cursor:pointer;white-space:nowrap}
+.au-lsw button.on{background:var(--st-card);color:var(--st-ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+/* QR card (desktop) / full-screen button (phone) */
+.au-qr{display:flex;align-items:center;gap:18px;margin:26px auto 0;max-width:500px;background:var(--st-ground);border-radius:22px;padding:14px 22px 14px 14px}
+.au-qr img{width:112px;height:112px;border-radius:12px;image-rendering:pixelated;flex:none;background:#fff}
+.au-qr b{display:block;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.au-qr p{margin:4px 0 0;font-size:14.5px;line-height:1.45;color:var(--st-ink2)}
+.au-mobw{display:none;text-align:center;margin-top:22px}
+@media (max-width:900px){.au-qr{display:none}.au-mobw{display:block}}
+/* paywall: today vs proposed */
+.au-cmp{display:grid;grid-template-columns:minmax(0,290px) minmax(0,1fr) minmax(0,290px);gap:clamp(24px,4vw,52px);align-items:center;margin-top:clamp(32px,5vw,52px)}
+.au-cmp figure{margin:0;text-align:center}
+.au-cmp figure img{display:block;width:100%;height:auto;filter:drop-shadow(0 24px 44px rgba(0,0,0,.18))}
+.au-cmp figcaption{margin-top:14px;font-size:15px;font-weight:600}
+.au-cmp figcaption span{color:var(--st-ink2);font-weight:400}
+.au-cmp-go{border:0;padding:0;background:none;cursor:pointer;display:block;width:100%;transition:transform .3s}
+.au-cmp-go:hover{transform:translateY(-4px)}
+.au-chg{list-style:none;margin:0;background:var(--st-card);border-radius:24px;padding:4px clamp(18px,2.4vw,28px)}
+.au-chg li{padding:15px 0;border-top:1px solid var(--st-hair)}
+.au-chg li:first-child{border-top:0}
+.au-chg h4{margin:0 0 7px;font-size:16px;font-weight:600;letter-spacing:-.01em;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.au-chg h4 i{font-style:normal;font-size:12px;font-weight:600;color:var(--st-accent);background:var(--st-mark);border-radius:6px;padding:2px 8px;white-space:nowrap}
+.au-was,.au-now{display:grid;grid-template-columns:78px 1fr;gap:8px;font-size:14.5px;line-height:1.42}
+.au-was{color:var(--st-ink3)}
+.au-now{color:var(--st-ink);margin-top:3px}
+.au-was em,.au-now em{font-style:normal;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding-top:2px}
+.au-now em{color:var(--st-link)}
+.au-kept{margin:22px 0 0;font-size:14px;color:var(--st-ink2);text-align:center}
+@media (max-width:900px){.au-cmp{grid-template-columns:1fr 1fr;gap:18px}.au-chg{grid-column:1 / -1;order:3}.au-was,.au-now{grid-template-columns:70px 1fr}}
+
+/* ?app — the prototype full screen on a real phone, with a bar that opens the idea panel */
+html.appmode,html.appmode body{height:100%;overflow:hidden;background:#000}
+html.appmode .au-nav,html.appmode .au-top-hero,html.appmode #why,html.appmode #ideas,html.appmode #compare,html.appmode .au-foot,
+html.appmode .au-proto-h,html.appmode #prototype .au-langrow,html.appmode #chips,html.appmode .au-hint,html.appmode .au-qr,html.appmode .au-mobw{display:none!important}
+html.appmode #prototype{padding:0;background:#000}
+html.appmode #prototype .au-wrap{padding:0;max-width:none}
+html.appmode .au-stage{display:block;margin:0}
+html.appmode .phone{position:fixed;top:0;left:0;right:0;margin:0 auto;width:min(100%,480px);height:calc(100% - 56px - env(safe-area-inset-bottom,0px));max-width:none;border-radius:0;padding:0;box-shadow:none;background:#000}
+html.appmode .phone-in{border-radius:0}
+html.appmode .island,html.appmode .sbar{display:none}
+html.appmode .scr .s-pad{padding-top:max(58px,calc(env(safe-area-inset-top,0px) + 16px))}
+html.appmode .scr .s-x,html.appmode .scr .s-lang{top:max(54px,calc(env(safe-area-inset-top,0px) + 10px))}
+.au-appbar,.au-scrim{display:none}
+html.appmode .au-appbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:70;height:calc(56px + env(safe-area-inset-bottom,0px));padding:0 12px env(safe-area-inset-bottom,0px) 16px;align-items:center;gap:12px;background:#0b0b0c;border-top:1px solid rgba(255,255,255,.1);color:#fff}
+.au-ab-why{flex:1;min-width:0;display:flex;align-items:center;gap:9px;background:none;border:0;color:#fff;font-size:14px;font-weight:500;text-align:left;cursor:pointer;padding:0}
+.au-ab-why i{width:8px;height:8px;border-radius:50%;background:var(--st-hi);flex:none}
+.au-ab-why span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.au-ab-why em{font-style:normal;color:rgba(255,255,255,.6);margin-left:auto;flex:none;font-size:13px}
+.au-appbar .au-lsw{background:rgba(255,255,255,.12)}
+.au-appbar .au-lsw button{color:rgba(255,255,255,.75);padding:5px 11px}
+.au-appbar .au-lsw button.on{background:#fff;color:#000}
+html.appmode #panel{position:fixed;left:0;right:0;bottom:0;z-index:80;max-width:none;width:auto;margin:0 auto;border-radius:24px 24px 0 0;max-height:78%;overflow:auto;transform:translateY(105%);transition:transform .3s cubic-bezier(.3,.7,.2,1);padding-bottom:calc(26px + env(safe-area-inset-bottom,0px))}
+html.appmode.au-open #panel{transform:none}
+html.appmode.au-open .au-scrim{display:block;position:fixed;inset:0;z-index:75;background:rgba(0,0,0,.5)}
+
+/* ?tour — 1280×720 walkthrough frames (record-video.sh renders them into assets/walkthrough.mp4) */
+.au-tour{display:none}
+html.tourmode,html.tourmode body{overflow:hidden;background:var(--st-ground)}
+html.tourmode body *{visibility:hidden}
+html.tourmode .phone,html.tourmode .phone *,html.tourmode .au-tour,html.tourmode .au-tour *{visibility:visible}
+html.tourmode .phone{position:fixed;left:170px;top:44px;margin:0;transform:scale(.755);transform-origin:0 0;box-shadow:0 0 0 1.5px #3a3d42,0 34px 80px rgba(0,0,0,.22);z-index:5;max-width:none}
+html.tourmode .au-tour{display:block;position:fixed;inset:0;z-index:6;pointer-events:none;color:var(--st-ink)}
+.au-tb{position:absolute;left:590px;top:30px;display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600}
+.au-tb img{width:26px;height:26px;border-radius:7px}
+.au-tb small{font-size:16px;font-weight:400;color:var(--st-ink2)}
+.au-tby{position:absolute;right:48px;top:32px;font-size:14px;color:var(--st-ink3)}
+.au-tcap{position:absolute;left:590px;right:60px;top:50%;transform:translateY(-50%)}
+.au-tk{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:600}
+.au-tk i{width:9px;height:9px;border-radius:50%;background:var(--st-hi);box-shadow:0 0 0 3px var(--st-mark)}
+.au-tk.au-ctx{color:var(--st-ink2)}.au-tk.au-ctx i{background:var(--st-ink3);box-shadow:none}
+.au-tt{font-size:46px;line-height:1.06;font-weight:700;letter-spacing:-.035em;margin:14px 0 14px;text-wrap:balance}
+.au-tl{font-size:23px;line-height:1.36;color:var(--st-ink2);letter-spacing:-.01em;margin:0;max-width:28ch}
+.au-to{margin-top:28px;padding-top:22px;border-top:1px solid var(--st-hair)}
+.au-to small{display:block;font-size:14px;font-weight:600;color:var(--st-ink3)}
+.au-to b{display:inline-block;font-size:62px;font-weight:700;letter-spacing:-.045em;line-height:1.08;color:var(--st-accent);margin-top:4px}
+.au-to span{display:block;font-size:16px;color:var(--st-ink2);margin-top:2px}
+.au-tprog{position:absolute;left:48px;right:48px;bottom:22px;height:4px;border-radius:3px;background:var(--st-hair);overflow:hidden}
+.au-tprog i{display:block;height:100%;background:var(--st-hi)}
+.au-ttap{position:absolute;left:0;top:0;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:rgba(255,255,255,.5);box-shadow:0 0 0 2.5px rgba(255,255,255,.9),0 6px 16px rgba(0,0,0,.35);opacity:0}
+.au-tintro,.au-tend{position:absolute;inset:0;background:var(--st-ground);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;opacity:0}
+.au-tintro .au-lede{margin-top:18px}
+.au-te-h{font-size:46px;line-height:1.08;font-weight:700;letter-spacing:-.035em;margin:0;max-width:18ch;text-wrap:balance}
+.au-te-n{display:flex;gap:64px;margin-top:30px}
+.au-te-n small{display:block;font-size:14px;color:var(--st-ink2)}
+.au-te-n b{display:block;font-size:76px;font-weight:700;letter-spacing:-.045em;line-height:1;color:var(--st-accent);margin:4px 0 6px}
+.au-te-n span{font-size:15px;color:var(--st-ink2)}
+.au-te-q{display:flex;align-items:center;gap:18px;margin-top:34px;background:var(--st-card);border-radius:20px;padding:12px 24px 12px 12px;text-align:left}
+.au-te-q img{width:104px;height:104px;border-radius:10px;image-rendering:pixelated}
+.au-te-q b{display:block;font-size:18px;font-weight:600}
+.au-te-q span{display:block;font-size:15px;color:var(--st-link);margin-top:3px}
+.au-te-f{position:absolute;bottom:44px;left:0;right:0;font-size:13px;color:var(--st-ink3);margin:0}
+
+/* ---------- screen engine (layout only, no colours) ---------- */
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;background:var(--b-bg);color:var(--b-ink);font-family:var(--b-font);
+     transform:translateX(100%);transition:transform .32s cubic-bezier(.3,.7,.2,1);overflow:hidden;text-align:left;line-height:normal;font-size:16px}
+.scr.is-active{transform:none;z-index:2}.scr.is-past{transform:translateX(-28%)}.scr.under{transform:none;z-index:1}
+.scr.sheet{transform:translateY(100%)}.scr.sheet.is-active{transform:none}
+.nofx,.nofx *{transition:none!important}
+.shot .scr{transition:none!important}
+/* ?phone — just the device at (10,10), for shoot.sh and hero-stills.sh (&clear = transparent ground) */
+.phoneonly body{background:#141615}
+.phoneonly.clear body{background:transparent}
+.phoneonly body *{visibility:hidden}
+.phoneonly .phone,.phoneonly .phone *{visibility:visible}
+.phoneonly .phone{position:fixed;top:10px;left:10px;z-index:99;box-shadow:none;max-width:none;margin:0}
+
+/* SCREENS:START — Tomplay's screens. Colours only via var(--b-*) or white/black alpha. */
+.scr{font-family:var(--b-font)}
+.s-pad{flex:1;display:flex;flex-direction:column;padding:60px 22px 26px;gap:12px;position:relative;z-index:1;min-height:0}
+.s-top{display:flex;align-items:center;gap:12px;min-height:30px}
+.s-back{background:none;border:0;color:var(--b-ink);font:400 30px/1 var(--b-font);padding:0 6px 0 0;cursor:pointer}
+.s-prog{flex:1;height:4px;border-radius:4px;background:var(--b-line);overflow:hidden}
+.s-prog i{display:block;height:100%;background:var(--b-primary);border-radius:4px}
+.s-h{font:700 26px/1.14 var(--b-font);letter-spacing:-.01em;margin:4px 0 0;color:var(--b-ink)}
+.s-sub{font:400 16px/1.4 var(--b-font);color:var(--b-ink2);margin:0}
+.s-cta{margin-top:auto;width:100%;border:0;border-radius:var(--b-pill);background:var(--b-primary);color:var(--b-primary-ink);font:600 18px var(--b-font);padding:16px;cursor:pointer;flex:none}
+.s-cta:disabled{opacity:.4}
+.s-ghost{background:none;border:0;color:var(--b-ink2);font:600 15px var(--b-font);padding:6px;cursor:pointer;align-self:center}
+.s-legal{display:flex;justify-content:center;gap:16px;font:400 12px var(--b-font);color:var(--b-ink2)}
+.s-x{position:absolute;top:56px;right:18px;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--b-ink2);background:var(--b-bg);color:var(--b-ink2);font:400 15px/1 var(--b-font);cursor:pointer;z-index:4;display:grid;place-items:center;padding:0}
+
+/* welcome — the listing's pink */
+.scr.s-pinkbg{background:var(--b-pink);color:var(--b-primary-ink)}
+.s-circle{position:absolute;width:520px;height:520px;border-radius:50%;background:var(--b-blue);left:-250px;bottom:-330px;z-index:0}
+.s-wlogo{height:34px;width:auto;filter:brightness(0) invert(1);align-self:center;margin-top:8px}
+.s-wh{font:700 33px/1.1 var(--b-font);text-align:center;margin:26px 0 0;letter-spacing:-.01em}
+.s-wsub{font:400 17px/1.4 var(--b-font);text-align:center;margin:0;opacity:.92}
+.s-laurel{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:34px}
+.s-laurel img{height:76px;width:auto}
+.s-laurel div{text-align:center;font:400 16px/1.2 var(--b-font)}
+.s-laurel b{display:block;font-weight:700;font-size:20px}
+.s-wproof{display:flex;justify-content:center;gap:22px;text-align:center;margin-top:6px}
+.s-wproof b{display:block;font:700 22px var(--b-font)}
+.s-wproof span{font:400 13px var(--b-font);opacity:.9}
+.s-recby{text-align:center;font:600 14px var(--b-font);margin:26px 0 0}
+.s-partners{width:84%;height:auto;align-self:center}
+.s-wcta{background:var(--b-bg);color:var(--b-primary)}
+
+/* instrument grid — their 'Select your main instrument' */
+.s-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:6px}
+.s-tile{background:var(--b-bg);border:2px solid transparent;border-radius:var(--b-radius);box-shadow:0 2px 10px rgba(0,0,0,.08);padding:10px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;font:400 13px var(--b-font);color:var(--b-ink2)}
+.s-tile img{width:46px;height:46px}
+.s-tile.on{border-color:var(--b-primary);background:var(--b-soft);color:var(--b-ink)}
+.s-more{font:600 15px var(--b-font);color:var(--b-primary);text-align:center;margin:6px 0 0}
+
+/* level — their chip style */
+.s-opts{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.s-opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--b-bg);border:1.5px solid var(--b-line);border-radius:10px;padding:15px 16px;font:400 17px var(--b-font);color:var(--b-ink);cursor:pointer}
+.s-opt svg{width:18px;height:18px;flex:none;fill:var(--b-primary)}
+.s-opt.on{background:var(--b-soft);border-color:var(--b-primary)}
+
+/* first piece */
+.s-meta{font:400 15px/1.35 var(--b-font);color:var(--b-ink2);margin:0}
+.s-meta b{color:var(--b-ink);font-weight:600}
+.s-score{position:relative;background:var(--b-bg);border-radius:14px;box-shadow:0 4px 18px rgba(0,0,0,.1);overflow:hidden;margin-top:4px}
+.s-score img{display:block;width:100%;height:auto}
+.s-bar{display:flex;align-items:center;gap:12px;margin-top:4px}
+.s-play{width:54px;height:54px;border-radius:50%;border:0;background:var(--b-primary);color:var(--b-primary-ink);cursor:pointer;display:grid;place-items:center;flex:none;padding:0}
+.s-play svg{width:22px;height:22px;fill:currentColor}
+.s-bar p{margin:0;font:400 14px/1.35 var(--b-font);color:var(--b-ink2)}
+.s-bar p b{display:block;color:var(--b-ink);font-weight:600;font-size:15px}
+.s-tempo{background:var(--b-bg);border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.09);padding:12px 16px 14px}
+.s-trow{display:flex;align-items:center;gap:10px}
+.s-trow svg{width:26px;height:26px;fill:none;stroke:var(--b-ink2);stroke-width:1.6}
+.s-trow span{font:400 15px var(--b-font);color:var(--b-ink2);flex:1}
+.s-step{width:32px;height:32px;border:0;background:none;font:400 26px/1 var(--b-font);color:var(--b-ink2);cursor:pointer;padding:0}
+.s-bpm{font:700 22px var(--b-font);color:var(--b-primary);min-width:46px;text-align:center}
+.s-slider{position:relative;height:4px;border-radius:4px;background:var(--b-line);margin-top:12px}
+.s-slider i{position:absolute;left:0;top:0;bottom:0;border-radius:4px;background:var(--b-primary)}
+.s-slider em{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--b-primary);box-shadow:0 1px 4px rgba(0,0,0,.25)}
+.s-feats{display:flex;gap:8px;flex-wrap:wrap}
+.s-feats span{font:600 13px var(--b-font);color:var(--b-primary);background:var(--b-soft);border-radius:var(--b-pill);padding:6px 11px}
+
+/* your library */
+.s-me{display:flex;align-items:center;gap:14px;background:var(--b-bg);border-radius:var(--b-radius);box-shadow:0 2px 12px rgba(0,0,0,.08);padding:12px 14px;margin-top:4px}
+.s-me img{width:52px;height:52px}
+.s-me b{display:block;font:700 19px var(--b-font);color:var(--b-ink)}
+.s-me span{display:inline-block;margin-top:4px;font:600 13px var(--b-font);color:var(--b-primary);background:var(--b-soft);border:1px solid var(--b-primary);border-radius:6px;padding:2px 8px}
+.s-lab{font:700 13px var(--b-font);letter-spacing:.04em;text-transform:uppercase;color:var(--b-ink2);margin:6px 0 0}
+.s-list{display:flex;flex-direction:column;gap:0;background:var(--b-surface);border-radius:var(--b-radius);padding:2px 14px}
+.s-piece{display:flex;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--b-line)}
+.s-piece:first-child{border-top:0}
+.s-piece i{width:34px;height:34px;border-radius:8px;background:var(--b-soft);display:grid;place-items:center;flex:none}
+.s-piece i svg{width:16px;height:16px;fill:var(--b-primary)}
+.s-piece b{display:block;font:600 16px var(--b-font);color:var(--b-ink)}
+.s-piece small{font:400 13px var(--b-font);color:var(--b-ink2)}
+.s-new{font:400 14px var(--b-font);color:var(--b-ink2);margin:0}
+.s-new b{color:var(--b-primary)}
+.s-ticks{display:flex;flex-direction:column;gap:7px;margin:0;padding:0;list-style:none}
+.s-ticks li{display:flex;gap:10px;font:400 15px/1.3 var(--b-font);color:var(--b-ink)}
+.s-ticks li::before{content:"✓";color:var(--b-primary);font-weight:700}
+
+/* paywall (proposed) */
+.scr.s-pw{background:linear-gradient(180deg,var(--b-soft) 0,var(--b-bg) 240px)}
+.s-plogo{height:28px;width:auto;align-self:flex-start;margin-top:2px}
+.s-ph{font:700 28px/1.12 var(--b-font);color:var(--b-ink);margin:8px 0 0;letter-spacing:-.01em}
+.s-ph em{font-style:normal;color:var(--b-primary)}
+.s-tl{list-style:none;margin:4px 0 0;padding:0;position:relative}
+.s-tl::before{content:"";position:absolute;left:13px;top:16px;bottom:22px;width:3px;border-radius:3px;background:var(--b-accent2)}
+.s-tl li{display:flex;gap:14px;padding:6px 0;position:relative}
+.s-tl li i{width:29px;height:29px;border-radius:50%;background:var(--b-soft);border:2px solid var(--b-primary);flex:none;display:grid;place-items:center;font:700 12px var(--b-font);font-style:normal;color:var(--b-primary)}
+.s-tl li:first-child i{background:var(--b-primary);color:var(--b-primary-ink)}
+.s-tl b{display:block;font:700 16px var(--b-font);color:var(--b-ink)}
+.s-tl span{display:block;font:400 14px/1.35 var(--b-font);color:var(--b-ink2);margin-top:2px}
+.s-pplan{display:flex;justify-content:space-between;align-items:center;border:2px solid var(--b-primary);background:var(--b-bg);border-radius:var(--b-radius);padding:12px 14px;position:relative;margin-top:6px}
+.s-pplan b{display:block;font:700 16px var(--b-font);color:var(--b-ink)}
+.s-pplan small{font:400 13px var(--b-font);color:var(--b-ink2)}
+.s-pplan strong{font:700 17px var(--b-font);color:var(--b-ink);text-align:right;white-space:nowrap}
+.s-pplan strong small{display:block;font-weight:400}
+.s-flag{position:absolute;top:-11px;left:14px;background:var(--b-primary);color:var(--b-primary-ink);font:700 11px var(--b-font);letter-spacing:.04em;border-radius:6px;padding:3px 8px}
+.s-proof{font:400 13.5px/1.45 var(--b-font);color:var(--b-ink2);margin:auto 0 0;text-align:center}
+.s-pw .s-cta{margin-top:0}
+.s-proof b{color:var(--b-ink)}
+.s-stars{color:var(--b-primary);letter-spacing:1px;margin-right:5px}
+.s-under{font:400 13px/1.35 var(--b-font);color:var(--b-ink2);text-align:center;margin:-4px 0 0}
+
+/* offer on close */
+.scr.sheet.s-offer{background:transparent}
+.s-scrim{flex:1;background:rgba(0,0,0,.38);border:0;padding:0;cursor:pointer}
+.s-sheet{flex:none;display:flex;flex-direction:column;gap:12px;background:var(--b-bg);border-radius:26px 26px 0 0;padding:14px 22px 30px;box-shadow:0 -10px 40px rgba(0,0,0,.18)}
+.s-grab{width:40px;height:5px;border-radius:5px;background:var(--b-line);align-self:center}
+.s-mplan{display:flex;justify-content:space-between;align-items:center;border:2px solid var(--b-primary);border-radius:var(--b-radius);padding:14px 16px;background:var(--b-soft)}
+.s-mplan b{display:block;font:700 17px var(--b-font);color:var(--b-ink)}
+.s-mplan small{font:400 13px var(--b-font);color:var(--b-ink2)}
+.s-mplan strong{font:700 20px var(--b-font);color:var(--b-ink);white-space:nowrap}
+.s-note{font:400 13px/1.4 var(--b-font);color:var(--b-ink2);margin:0;text-align:center}
+
+/* paywall today — rebuilt from the trial page */
+.s-th{font:500 28px/1.15 var(--b-font);color:var(--b-primary);margin:6px 0 0}
+.s-ben{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+.s-ben li{display:flex;gap:10px;font:400 14px/1.3 var(--b-font);color:var(--b-ink2)}
+.s-ben li::before{content:"✓";color:var(--b-primary);font-weight:700;font-size:15px}
+.s-ben b{display:block;color:var(--b-ink);font-weight:600;font-size:15px}
+.s-tplans{display:flex;flex-direction:column;gap:8px}
+.s-tplan{display:flex;justify-content:space-between;align-items:center;border:1.5px solid var(--b-line);border-radius:10px;padding:11px 14px;font:400 15px var(--b-font);color:var(--b-ink)}
+.s-tplan.on{border-color:var(--b-primary);background:var(--b-soft)}
+.s-tplan b{font-weight:700}
+.s-terms{font:400 12.5px/1.4 var(--b-font);color:var(--b-ink2);margin:0}
+/* SCREENS:END */
+</style>
+</head>
+<body>
+
+<nav class="au-nav" aria-label="Sections">
+  <div class="au-nav-in">
+    <div class="au-brand">
+      <img src="assets/brand/appstore-icon.jpg" alt="">
+      <span>Growth Audit <small>· Tomplay</small></span>
+    </div>
+    <a class="au-opt" href="#why">Why this</a>
+    <a href="#ideas">Five ideas</a>
+    <a href="#prototype">Prototype</a>
+    <a class="au-opt" href="#compare" id="navCompare" hidden>Paywall</a>
+  </div>
+</nav>
+
+<header class="au-top-hero" id="top">
+  <div class="au-wrap">
+    <p class="au-eyebrow"><i></i>Growth Audit · October 2026</p>
+    <h1 class="au-display">Tomplay</h1>
+    <p class="au-lede">Five ideas to turn more musicians into subscribers. <span>Each one built into your own onboarding and paywall, so you can tap through it.</span></p>
+    <p class="au-byline">Prepared by Adapty for the Tomplay team</p>
+    <div class="au-ctas">
+      <a class="au-btn" href="#ideas">See the five ideas</a>
+      <a class="au-lnk" href="#prototype">Open the prototype</a>
+      <button type="button" class="au-lnk au-play" id="heroVideo" hidden>Watch the 30-second walkthrough</button>
+    </div>
+  </div>
+  <!-- filled from CONTENT.hero: three screen ids → assets/hero/<id>.png (make them with hero-stills.sh) -->
+  <div class="au-phones" id="heroPhones" aria-label="Three screens from the prototype"></div>
+</header>
+
+<section class="au-sec au-white" id="why">
+  <div class="au-wrap">
+    <div class="au-split">
+      <div>
+        <p class="au-kicker">Why you’re seeing this</p>
+        <h2 class="au-h2">30,000 subscription apps taught us what moves conversion. <span>Here’s what we’d test first at Tomplay.</span></h2>
+      </div>
+      <div>
+        <p>Adapty runs subscriptions for <b>more than 30,000 apps</b>, so we see which onboarding and paywall changes lift revenue across the whole market, not just inside one app.</p>
+        <p>We pointed that at Tomplay. We took <b>your own screens, copy and prices</b> from your App Store listing, your site and your trial page, and rebuilt the path from install to paywall around the five ideas with the most potential.</p>
+      </div>
+    </div>
+    <div class="au-stats">
+      <div class="au-stat"><b>30,000+</b><span>apps run their subscriptions on Adapty</span></div>
+      <div class="au-stat"><b>5</b><span>ideas, each built as a working screen</span></div>
+      <div class="au-stat"><b>0</b><span>changes to your art direction</span></div>
+    </div>
+    <div class="au-notes">
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9z"/></svg></div>
+        <h3>Five ideas, not fifteen</h3>
+        <p>We’re not proposing to rebuild every screen. These are the changes with the highest potential, ranked by what we’d test first.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg></div>
+        <h3>Your design, not ours</h3>
+        <p>Every colour, control and price in the prototype is Tomplay’s. We changed the order and what gets shown.</p>
+      </div>
+      <div class="au-note">
+        <div class="au-ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3 8-8"/><path d="M20 12v6.5a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 18.5v-13A1.5 1.5 0 0 1 5.5 4H15"/></svg></div>
+        <h3>We hope you haven’t tried these yet</h3>
+        <p>We work from the outside, so we can’t see your live flow or your test history. If you’ve already run one of these, tell us and we’ll go deeper on the rest.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec" id="ideas">
+  <div class="au-wrap">
+    <div class="au-ideas-h">
+      <p class="au-kicker">The shortlist</p>
+      <h2 class="au-h2">Five ideas. <span>Ranked by what we’d test first.</span></h2>
+    </div>
+    <div class="au-list" id="ideaList"></div>
+    <div class="au-band">
+      <div>
+        <p class="au-k">Potential outcome, based on Adapty data</p>
+        <h3>Together they work on three moments: what you ask, what you let them play, and what happens when someone says no.</h3>
+        <p class="au-fn" id="bandFn"></p>
+        <a class="au-btn" href="#prototype">Tap through the prototype</a>
+      </div>
+      <div class="au-nums" id="bandNums"></div>
+    </div>
+  </div>
+</section>
+
+<section class="au-sec au-white" id="prototype">
+  <div class="au-wrap">
+    <div class="au-proto-h">
+      <p class="au-kicker">The prototype</p>
+      <h2 class="au-h2">Every idea, inside your own onboarding.</h2>
+      <p>Tap through it like a new user, or jump straight to an idea. Numbered chips mark the screens that carry one.</p>
+    </div>
+    <div class="au-langrow" id="langRow" hidden><span>Prototype language</span><div class="au-lsw" id="langSw" role="group" aria-label="Prototype language"></div></div>
+    <div class="au-seg" id="chips" role="tablist" aria-label="Screens"></div>
+    <div class="au-stage">
+      <div class="phone"><div class="phone-in">
+        <div class="island"></div>
+        <div class="sbar"><span>9:41</span><span>●●● ▮</span></div>
+
+<!-- SCREENS:START — Tomplay's screens, rebuilt from the App Store listing, tomplay.com and its trial page (no recorded flow exists). data-t = translatable (EN here, FR in CONTENT.i18n). -->
+
+<section class="scr s-pinkbg" data-id="welcome">
+  <div class="s-circle"></div>
+  <div class="s-pad">
+    <img class="s-wlogo" src="assets/brand/logo.svg" alt="Tomplay">
+    <h1 class="s-wh" data-t="w_h">Learn and play your favourite music</h1>
+    <p class="s-wsub" data-t="w_sub">Thousands of interactive scores with high-quality recordings to accompany you</p>
+    <div class="s-laurel"><img src="assets/crop/laurel-l.png" alt=""><div><b>App Store</b><span data-t="w_ec">Editor’s Choice</span></div><img src="assets/crop/laurel-r.png" alt=""></div>
+    <div class="s-wproof">
+      <div><b class="w-rate">4.7 ★</b><span data-t="w_rc">7,193 ratings</span></div>
+      <div><b data-t="w_2m">2 million</b><span data-t="w_mus">musicians</span></div>
+    </div>
+    <p class="s-recby" data-t="w_rec">Recommended by</p>
+    <img class="s-partners" src="assets/crop/partners.png" alt="Yamaha, Kawai, ABRSM">
+    <button class="s-cta s-wcta" data-go="instrument"><span data-t="w_cta">Get started</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="instrument">
+  <div class="s-pad">
+    <div class="s-top"><button class="s-back" data-back aria-label="Back">‹</button><div class="s-prog"><i style="width:33%"></i></div></div>
+    <h1 class="s-h" data-t="in_h">Select your main instrument</h1>
+    <p class="s-sub" data-t="in_sub">26 instruments. Also for singers and bands &amp; ensembles.</p>
+    <div class="s-grid">
+      <button class="s-tile" data-pick="inst:piano" data-advance="level"><img src="assets/crop/inst-piano.png" alt=""><span data-t="i_piano">Piano</span></button>
+      <button class="s-tile" data-pick="inst:violin" data-advance="level"><img src="assets/crop/inst-violin.png" alt=""><span data-t="i_violin">Violin</span></button>
+      <button class="s-tile" data-pick="inst:sax" data-advance="level"><img src="assets/crop/inst-sax.png" alt=""><span data-t="i_sax">Saxophone</span></button>
+      <button class="s-tile" data-pick="inst:flute" data-advance="level"><img src="assets/crop/inst-flute.png" alt=""><span data-t="i_flute">Flute</span></button>
+      <button class="s-tile" data-pick="inst:recorder" data-advance="level"><img src="assets/crop/inst-recorder.png" alt=""><span data-t="i_recorder">Recorder</span></button>
+      <button class="s-tile" data-pick="inst:clarinet" data-advance="level"><img src="assets/crop/inst-clarinet.png" alt=""><span data-t="i_clarinet">Clarinet</span></button>
+      <button class="s-tile" data-pick="inst:guitar" data-advance="level"><img src="assets/crop/inst-guitar.png" alt=""><span data-t="i_guitar">Guitar</span></button>
+      <button class="s-tile" data-pick="inst:bass" data-advance="level"><img src="assets/crop/inst-bass.png" alt=""><span data-t="i_bass">Bass</span></button>
+      <button class="s-tile" data-pick="inst:ukulele" data-advance="level"><img src="assets/crop/inst-ukulele.png" alt=""><span data-t="i_ukulele">Ukulele</span></button>
+      <button class="s-tile" data-pick="inst:drums" data-advance="level"><img src="assets/crop/inst-drums.png" alt=""><span data-t="i_drums">Drums</span></button>
+      <button class="s-tile" data-pick="inst:percussion" data-advance="level"><img src="assets/crop/inst-percussion.png" alt=""><span data-t="i_percussion">Percussion</span></button>
+      <button class="s-tile" data-pick="inst:cello" data-advance="level"><img src="assets/crop/inst-cello.png" alt=""><span data-t="i_cello">Cello</span></button>
+    </div>
+    <p class="s-more" data-t="in_more">See all 26 instruments ›</p>
+  </div>
+</section>
+
+<section class="scr" data-id="level">
+  <div class="s-pad">
+    <div class="s-top"><button class="s-back" data-back aria-label="Back">‹</button><div class="s-prog"><i style="width:66%"></i></div></div>
+    <h1 class="s-h" data-t="lv_h">Select your level</h1>
+    <p class="s-sub" data-t="lv_sub">Every piece is arranged in up to 8 levels, from absolute beginner to advanced.</p>
+    <div class="s-opts">
+      <button class="s-opt" data-pick="lvl:never" data-advance="piece"><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg><span data-t="l_never">I’ve never played</span></button>
+      <button class="s-opt" data-pick="lvl:beg" data-advance="piece"><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg><span data-t="l_beg">Beginner</span></button>
+      <button class="s-opt" data-pick="lvl:int" data-advance="piece"><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg><span data-t="l_int">Intermediate</span></button>
+      <button class="s-opt" data-pick="lvl:adv" data-advance="piece"><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg><span data-t="l_adv">Advanced</span></button>
+      <button class="s-opt" data-pick="lvl:virt" data-advance="piece"><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg><span data-t="l_virt">Virtuoso</span></button>
+    </div>
+  </div>
+</section>
+
+<section class="scr" data-id="piece">
+  <div class="s-pad">
+    <div class="s-top"><button class="s-back" data-back aria-label="Back">‹</button><div class="s-prog"><i style="width:100%"></i></div></div>
+    <h1 class="s-h" data-t="pc_h">Play your first piece</h1>
+    <p class="s-meta"><b class="dyn-piece">River Flows In You</b> · <span class="dyn-comp">Yiruma</span><br><span class="dyn-arr">Piano · Beginner</span></p>
+    <div class="s-score"><img src="assets/crop/score.png" alt="A Tomplay score with note names"></div>
+    <div class="s-bar">
+      <button class="s-play" aria-label="Play"><svg class="ic-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="ic-pause" viewBox="0 0 24 24" style="display:none"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg></button>
+      <p><b class="dyn-pst">Play along</b><span class="dyn-pline">Backing tracks recorded by professional musicians</span></p>
+    </div>
+    <div class="s-tempo">
+      <div class="s-trow"><svg viewBox="0 0 24 24"><path d="M9 3h6l4 18H5z"/><path d="M12 16l5-9"/></svg><span data-t="pc_tempo">Tempo</span><button class="s-step s-minus" aria-label="Slower">−</button><b class="s-bpm" data-bind="tempo">117</b><button class="s-step s-plus" aria-label="Faster">+</button></div>
+      <div class="s-slider"><i class="dyn-fill"></i><em class="dyn-knob"></em></div>
+    </div>
+    <div class="s-feats"><span data-t="pc_f1">Loop a section</span><span data-t="pc_f2">Note by note</span><span data-t="pc_f3">Visual guide</span></div>
+    <button class="s-cta" data-go="ready"><span data-t="pc_cta">Continue</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="ready">
+  <div class="s-pad">
+    <h1 class="s-h dyn-rh" style="margin-top:14px">Your piano sheet music is ready</h1>
+    <div class="s-me"><img class="dyn-ricon" src="assets/crop/inst-piano.png" alt=""><div><b data-bind="label:inst"></b><span class="dyn-rlvl">Beginner</span></div></div>
+    <p class="s-lab" data-t="rd_start">Start with</p>
+    <div class="s-list dyn-list"></div>
+    <p class="s-new" data-t="rd_new"><b>+200</b> new interactive scores added each week</p>
+    <p class="s-lab" data-t="rd_made">Made for your level</p>
+    <ul class="s-ticks dyn-ticks"></ul>
+    <button class="s-cta" data-go="paywall"><span data-t="rd_cta">Continue</span></button>
+  </div>
+</section>
+
+<section class="scr s-pw" data-id="paywall">
+  <button class="s-x" data-go="offer" aria-label="Close">✕</button>
+  <div class="s-pad">
+    <img class="s-plogo" src="assets/brand/logo.svg" alt="Tomplay">
+    <h1 class="s-ph dyn-ph">Every piano score, <em>free for 14 days</em></h1>
+    <ul class="s-tl">
+      <li><i>1</i><div><b data-t="pw_t1">Today</b><span data-t="pw_d1">Unlimited access to over 100,000 scores, all levels, on all your devices</span></div></li>
+      <li><i>2</i><div><b data-t="pw_t2">Any day before day 14</b><span data-t="pw_d2">Cancel during the free trial and you won’t be charged</span></div></li>
+      <li><i>14</i><div><b data-t="pw_t3">Day 14</b><span data-t="pw_d3">Premium starts: $119.99 a year, just $10.00 a month</span></div></li>
+    </ul>
+    <div class="s-pplan"><span class="s-flag" data-t="pw_flag">14 DAYS FREE</span><div><b data-t="pw_pn">Yearly Premium Access</b><small data-t="pw_ps">Billed yearly after the trial</small></div><strong><span data-t="pw_pp">$10.00/mo</span><small data-t="pw_py">$119.99/year</small></strong></div>
+    <p class="s-proof"><span class="s-stars">★★★★★</span><b class="w-rate2">4.7</b> <span data-t="pw_proof">· 7,193 ratings · Recommended by Yamaha, Kawai &amp; ABRSM</span></p>
+    <button class="s-cta" data-go="offer"><span data-t="pw_cta">Start my 14 free days</span></button>
+    <p class="s-under" data-t="pw_under">No charge today. Then $119.99 a year. Cancel anytime.</p>
+    <div class="s-legal"><span data-t="lg_terms">Terms of Service</span><span data-t="lg_priv">Privacy Policy</span><span data-t="lg_rest">Restore</span></div>
+  </div>
+</section>
+
+<section class="scr sheet s-offer" data-id="offer">
+  <button class="s-scrim" data-go="paywall" aria-label="Back to the paywall"></button>
+  <div class="s-sheet">
+    <div class="s-grab"></div>
+    <h1 class="s-h" data-t="of_h">Not ready for a whole year?</h1>
+    <p class="s-sub" data-t="of_sub">Go month by month instead. Every score, every instrument, every level.</p>
+    <div class="s-mplan"><div><b data-t="of_pn">Monthly Premium Access</b><small data-t="of_ps">Cancel anytime</small></div><strong data-t="of_pp">$19.99/mo</strong></div>
+    <button class="s-cta" style="margin-top:4px"><span data-t="of_cta">Continue with monthly</span></button>
+    <p class="s-note" data-t="of_note">The 14 free days come with the yearly plan.</p>
+    <button class="s-ghost" data-go="paywall"><span data-t="of_back">Back to my 14 free days</span></button>
+  </div>
+</section>
+
+<section class="scr" data-id="today" data-aside>
+  <button class="s-x" aria-label="Close">✕</button>
+  <div class="s-pad">
+    <img class="s-plogo" src="assets/brand/logo.svg" alt="Tomplay">
+    <h1 class="s-th" data-t="td_h">Start your 14-day free trial!</h1>
+    <p class="s-sub" data-t="td_sub">Try our Premium membership for free and enjoy these benefits:</p>
+    <ul class="s-ben">
+      <li><div><b data-t="td_b1">Unlimited access to our entire sheet music catalogue</b><span data-t="td_s1">For all instruments and levels</span></div></li>
+      <li><div><b data-t="td_b2">Over 100,000 scores with professional audio accompaniments</b><span data-t="td_s2">Plus 200 new interactive scores added each week</span></div></li>
+      <li><div><b data-t="td_b3">Available on all your devices</b><span data-t="td_s3">iPad, Android Tablet, Smartphone, PC and Mac</span></div></li>
+      <li><div><b data-t="td_b4">Extra perks for subscribers</b><span data-t="td_s4">Priority access to customer service, exclusive promotions</span></div></li>
+    </ul>
+    <div class="s-tplans">
+      <div class="s-tplan on"><span data-t="td_y">Yearly · 14-day free trial</span><b data-t="td_yp">$119.99/year</b></div>
+      <div class="s-tplan"><span data-t="td_m">Monthly</span><b data-t="td_mp">$19.99/month</b></div>
+    </div>
+    <p class="s-terms" data-t="td_terms">14-day free trial. Then $119.99/year. If you cancel your subscription during the free trial, you won’t be charged.</p>
+    <button class="s-cta"><span data-t="td_cta">TRY 14 DAYS FREE</span></button>
+  </div>
+</section>
+<!-- SCREENS:END -->
+
+      </div></div>
+      <div class="au-pn" id="panel" aria-live="polite"></div>
+    </div>
+    <p class="au-hint">Close the paywall with ✕ to see idea 4.</p>
+    <!-- shown when CONTENT.liveUrl is set: assets/qr-app.png = qr.swift "<liveUrl>?app" -->
+    <div class="au-qr" id="qrCard" hidden><img src="assets/qr-app.png" alt="QR code that opens the prototype full screen"><div><b>Try it on your phone</b><p>Scan to open the prototype full screen, the way a new user would see it.</p></div></div>
+    <div class="au-mobw" id="qrMob" hidden><a class="au-btn" href="?app">Open it full screen</a></div>
+  </div>
+</section>
+
+<!-- the paywall TODAY vs PROPOSED — built from CONTENT.compare (stills: assets/hero/<today>.png, <proposed>.png) -->
+<section class="au-sec" id="compare" hidden><div class="au-wrap" id="cmpBody"></div></section>
+
+<footer class="au-foot" id="sources">
+  <div class="au-wrap">
+    <details id="srcDetails">
+      <summary>Where the numbers come from</summary>
+      <div class="au-srcs" id="srcBody"></div>
+    </details>
+    <p class="au-fine" id="fine"></p>
+    <div class="au-cta-line">
+      <p>Every screen here can be built and A/B tested in Adapty’s Flow Builder, with no app release.</p>
+      <a class="au-btn" href="https://adapty.io/flow-paywall-builder/" target="_blank" rel="noopener">About Flow Builder</a>
+    </div>
+  </div>
+</footer>
+
+<!-- extras: video dialog (CONTENT.video), ?app bar, ?tour overlay (CONTENT.tour) -->
+<dialog class="au-vid" id="vid" aria-label="Walkthrough video">
+  <div class="au-vid-in"><video id="vidEl" controls muted playsinline preload="none"></video></div>
+  <div class="au-vid-bar"><a id="vidDl" download>Download the MP4</a><button type="button" class="au-vid-x" id="vidX">Close</button></div>
+</dialog>
+<div class="au-scrim" id="abScrim"></div>
+<div class="au-appbar" id="appbar">
+  <button type="button" class="au-ab-why" id="abWhy"><i></i><span id="abT"></span><em>Why ↑</em></button>
+  <div class="au-lsw" id="abLang" role="group" aria-label="Language"></div>
+</div>
+<div class="au-tour" aria-hidden="true">
+  <div class="au-tb"><img src="assets/brand/appstore-icon.jpg" alt="">Growth Audit <small>· Tomplay</small></div>
+  <div class="au-tby">Prepared by Adapty</div>
+  <div class="au-tcap" id="tCap"></div>
+  <div class="au-ttap" id="tTap"></div>
+  <div class="au-tprog"><i id="tProg"></i></div>
+  <div class="au-tintro" id="tIntro"></div>
+  <div class="au-tend" id="tEnd"></div>
+</div>
+
+<!-- CONTENT — all the audit's words and numbers, as data. Schema (brand-check enforces it):
+     ideas  : 3–5 rows, ranked (the audit is five ideas, never fifteen). screen = the screen that shows it.
+     panel  : one entry per screen. idea = its number in ideas (1-based) or 0 for a context screen.
+              why on an idea screen reads "<b>Try</b> X, <b>because</b> Y." in ≤ 45 words; iv = its range.
+              why on a context screen is one line saying what it sets up.
+     hero   : three screen ids shown as stills in the hero — run hero-stills.sh after the screens are done.
+     outcome: combined "up to" numbers, PS-deck style, never above the ceiling of the per-idea ranges.
+     sources: public facts only — App Store, their site, their screens. No sales research on this page.
+     EXTRAS (each one hides itself when left empty):
+     langs  : [{"code":"en","name":"English"},{"code":"es","name":"Español · Spain prices"}] — first = the markup's language
+     i18n   : {"es": {"<data-t key>": "text with {tokens}"}} — every data-t key, for every language after the first
+     prices : {"es": {"yr": "39,99 €", …}} — {tokens} in i18n strings; that storefront's real IAP prices
+     labelsI18n: {"es": {"goal": {"a": "…"}}} — C.labels per language (data-bind="label:…")
+     liveUrl: final Pages URL (QR card + video end card); the QR file encodes liveUrl + "?app"
+     video / poster: "assets/walkthrough.mp4" / "assets/walkthrough-poster.jpg" (record-video.sh)
+     compare: {today, proposed, kicker, title, sub, todayCap, rows:[{h, idea, was, now}], kept} — today = a data-aside screen
+     tour   : {segments:[{id, d, st, tap:[selector-in-screen, ms], pop, reveal, end}], captions:{id:{n|k, t, l, o, ol}},
+              introLede, endTitle} — ~30 s total; the last segment has end:true (the end card) -->
+<script type="application/json" id="content">
+{
+ "app": "Tomplay",
+ "state": {
+  "inst": "piano",
+  "lvl": "beg",
+  "tempo": 117,
+  "playing": false,
+  "lang": "en"
+ },
+ "labels": {
+  "inst": {
+   "piano": "Piano",
+   "violin": "Violin",
+   "sax": "Saxophone",
+   "flute": "Flute",
+   "recorder": "Recorder",
+   "clarinet": "Clarinet",
+   "guitar": "Guitar",
+   "bass": "Bass",
+   "ukulele": "Ukulele",
+   "drums": "Drums",
+   "percussion": "Percussion",
+   "cello": "Cello"
+  },
+  "lvl": {
+   "never": "I’ve never played",
+   "beg": "Beginner",
+   "int": "Intermediate",
+   "adv": "Advanced",
+   "virt": "Virtuoso"
+  }
+ },
+ "chips": {
+  "welcome": "Welcome",
+  "instrument": "Instrument",
+  "level": "Level",
+  "piece": "First piece",
+  "ready": "Your library",
+  "paywall": "Paywall",
+  "offer": "Offer on close",
+  "today": "Today"
+ },
+ "hero": [
+  "ready",
+  "paywall",
+  "piece"
+ ],
+ "outcome": {
+  "cr": "+20%",
+  "arpu": "+10%"
+ },
+ "ideas": [
+  {
+   "screen": "ready",
+   "title": "Ask their instrument and level, then say it back",
+   "what": "Your web sign-up already asks ‘Select your instrument’ and ‘Select your level’, and the app has its own 26-instrument grid, yet nothing a new user picks reaches the paywall. Ask both first, then answer: ‘Your piano sheet music is ready’, three pieces at Beginner, and a paywall headline that names the instrument.",
+   "impact": "+10–20%",
+   "il": "CR to purchase"
+  },
+  {
+   "screen": "paywall",
+   "title": "Make the 14 free days the headline",
+   "what": "On your trial page the 14-day free trial is a line of terms under the benefits. Lead with it and lay it out as three steps: today everything is open, any day before day 14 they can cancel and pay nothing, and on day 14 it’s $119.99 a year, which is $10.00 a month.",
+   "impact": "+10–15%",
+   "il": "CR to trial"
+  },
+  {
+   "screen": "piece",
+   "title": "Let them play one piece before the paywall",
+   "what": "Play-along and tempo control are what your listing leads with, but a new user only meets them after deciding. Put one real piece at their level on screen first, with your play button and the tempo stepper at 117 BPM, so the first minute is playing, not reading.",
+   "impact": "+5–15%",
+   "il": "CR to purchase"
+  },
+  {
+   "screen": "offer",
+   "title": "Offer the month to people who close it",
+   "what": "Monthly Premium Access is $19.99 with no trial, so next to 14 free days it mostly adds doubt. Keep the paywall on the yearly trial, and show the monthly plan only to people who close it: one calm sheet, no countdown, no discount.",
+   "impact": "+5–10%",
+   "il": "ARPU"
+  },
+  {
+   "screen": "welcome",
+   "title": "Lead with the proof you already have",
+   "what": "App Store Editor’s Choice, 4.7 from 7,193 ratings, 2 million musicians and ‘Recommended by Yamaha, Kawai, ABRSM’ are all on your listing. Put them on the first screen, and the rating in one line beside the paywall button, where people decide.",
+   "impact": "+5–10%",
+   "il": "CR to purchase"
+  }
+ ],
+ "panel": {
+  "welcome": {
+   "idea": 5,
+   "t": "Proof on the first screen",
+   "why": "<b>Try<\/b> your Editor’s Choice, rating and Yamaha, Kawai and ABRSM on screen one, <b>because<\/b> a cold install doesn’t know Tomplay yet, and these are true, easy to check and already yours.",
+   "iv": "CR +5–10%",
+   "il": "to purchase",
+   "also": "Headline and subline are your first App Store screenshot, word for word."
+  },
+  "instrument": {
+   "idea": 0,
+   "t": "Your instrument grid, moved up front",
+   "why": "Your own ‘Select your main instrument’ screen, as the first question. It sets up idea 1."
+  },
+  "level": {
+   "idea": 0,
+   "t": "Their level, in your words",
+   "why": "The level question from your web sign-up, word for word. Ideas 1 and 3 read the answer."
+  },
+  "piece": {
+   "idea": 3,
+   "t": "Play before they pay",
+   "why": "<b>Try<\/b> one playable piece at their level before the paywall, <b>because<\/b> hearing the backing track and slowing a real score to their speed is the moment your product sells itself, and it costs one screen.",
+   "iv": "CR +5–15%",
+   "il": "to purchase",
+   "also": "Tap − to slow it down, ▶ to play. The piece follows the instrument they picked."
+  },
+  "ready": {
+   "idea": 1,
+   "t": "Say their instrument and level back",
+   "why": "<b>Try<\/b> answering the two questions with their own library, <b>because<\/b> asking and then showing everyone the same paywall is effort with no payoff, while ‘piano, Beginner’ proves the 100,000 scores include theirs.",
+   "iv": "CR +10–20%",
+   "il": "to purchase",
+   "also": "The paywall headline names the instrument too, and the tips change with the level."
+  },
+  "paywall": {
+   "idea": 2,
+   "t": "The 14 free days, as the headline",
+   "why": "<b>Try<\/b> the trial as the headline with a three-step timeline, <b>because<\/b> in learning apps a trial tends to raise lifetime value, and seeing when billing starts and how to avoid it removes the main reason to wait.",
+   "iv": "CR +10–15%",
+   "il": "to trial",
+   "also": "Idea 1 names the instrument in the headline; idea 5 puts the rating beside the button."
+  },
+  "offer": {
+   "idea": 4,
+   "t": "The month, for people who close it",
+   "why": "<b>Try<\/b> one calm sheet with the $19.99 monthly plan when someone closes the paywall, <b>because<\/b> people who won’t commit to a year often still want to play this month, and today they leave with nothing.",
+   "iv": "ARPU +5–10%",
+   "il": "from people who close the paywall",
+   "also": "‘Back to my 14 free days’ returns them to the yearly trial."
+  },
+  "today": {
+   "idea": 0,
+   "t": "Your paywall today",
+   "why": "Rebuilt from your trial page and listing terms. It sits outside the flow, for the side-by-side below."
+  }
+ },
+ "langs": [
+  {
+   "code": "en",
+   "name": "English"
+  },
+  {
+   "code": "fr",
+   "name": "Français · France prices"
+  }
+ ],
+ "i18n": {
+  "fr": {
+   "w_h": "Apprenez et jouez vos morceaux préférés",
+   "w_sub": "Des milliers de partitions interactives, avec des enregistrements de qualité pour vous accompagner",
+   "w_ec": "Choix de la rédaction",
+   "w_rc": "{rc} notes",
+   "w_2m": "2 millions",
+   "w_mus": "de musiciens",
+   "w_rec": "Recommandé par",
+   "w_cta": "Commencer",
+   "in_h": "Choisissez votre instrument principal",
+   "in_sub": "26 instruments. Également pour les chanteurs, orchestres et ensembles.",
+   "in_more": "Voir les 26 instruments ›",
+   "lv_h": "Choisissez votre niveau",
+   "lv_sub": "Chaque morceau est arrangé en 8 niveaux maximum, de débutant complet à avancé.",
+   "pc_h": "Jouez votre premier morceau",
+   "pc_tempo": "Tempo",
+   "pc_f1": "Jouez en boucle",
+   "pc_f2": "Note par note",
+   "pc_f3": "Guide visuel",
+   "pc_cta": "Continuer",
+   "rd_start": "Pour commencer",
+   "rd_new": "<b>+200<\/b> nouvelles partitions interactives chaque semaine",
+   "rd_made": "Adapté à votre niveau",
+   "rd_cta": "Continuer",
+   "pw_t1": "Aujourd’hui",
+   "pw_d1": "Accès illimité à plus de 100 000 partitions, tous niveaux, sur tous vos appareils",
+   "pw_t2": "Avant le 14e jour",
+   "pw_d2": "Annulez pendant l’essai gratuit, vous ne serez pas facturé",
+   "pw_t3": "Jour 14",
+   "pw_d3": "Premium commence : {yr} par an, soit {pm} par mois",
+   "pw_flag": "14 JOURS OFFERTS",
+   "pw_pn": "Accès annuel Premium",
+   "pw_ps": "Facturé à l’année après l’essai",
+   "pw_pp": "{pm}/mois",
+   "pw_py": "{yr}/an",
+   "pw_proof": "· {rc} notes · Recommandé par Yamaha, Kawai et ABRSM",
+   "pw_cta": "Commencer mes 14 jours offerts",
+   "pw_under": "Rien à payer aujourd’hui. Puis {yr} par an. Annulable à tout moment.",
+   "lg_terms": "Conditions",
+   "lg_priv": "Confidentialité",
+   "lg_rest": "Restaurer",
+   "of_h": "Pas prêt pour une année entière ?",
+   "of_sub": "Passez au mois. Toutes les partitions, tous les instruments, tous les niveaux.",
+   "of_pn": "Accès mensuel Premium",
+   "of_ps": "Annulable à tout moment",
+   "of_pp": "{mo}/mois",
+   "of_cta": "Continuer avec l’offre mensuelle",
+   "of_note": "Les 14 jours offerts sont inclus dans l’offre annuelle.",
+   "of_back": "Revenir à mes 14 jours offerts",
+   "td_h": "Commencez votre essai gratuit de 14 jours !",
+   "td_sub": "Essayez notre abonnement Premium gratuitement et profitez des avantages suivants :",
+   "td_b1": "Accès illimité à tout notre catalogue de partitions",
+   "td_s1": "Pour tous instruments et niveaux",
+   "td_b2": "Plus de 100'000 partitions avec des accompagnements musicaux professionnels",
+   "td_s2": "Plus 200 nouvelles partitions interactives ajoutées chaque semaine",
+   "td_b3": "Disponible sur tous vos appareils",
+   "td_s3": "iPad, tablette Android, smartphone, PC et Mac",
+   "td_b4": "Privilèges particuliers pour les abonnés",
+   "td_s4": "Accès prioritaire au service client, promotions exclusives",
+   "td_y": "Annuel · essai gratuit de 14 jours",
+   "td_yp": "{yr}/an",
+   "td_m": "Mensuel",
+   "td_mp": "{mo}/mois",
+   "td_terms": "Essai gratuit de 14 jours. Puis {yr}/an. Si vous annulez votre abonnement pendant l'essai gratuit, vous ne serez pas facturé.",
+   "td_cta": "ESSAI GRATUIT DE 14 JOURS",
+   "i_piano": "Piano",
+   "i_violin": "Violon",
+   "i_sax": "Saxophone",
+   "i_flute": "Flûte",
+   "i_recorder": "Flûte à bec",
+   "i_clarinet": "Clarinette",
+   "i_guitar": "Guitare",
+   "i_bass": "Basse",
+   "i_ukulele": "Ukulélé",
+   "i_drums": "Batterie",
+   "i_percussion": "Percussions",
+   "i_cello": "Violoncelle",
+   "l_never": "Je n’ai jamais joué(e)",
+   "l_beg": "Débutant",
+   "l_int": "Intermédiaire",
+   "l_adv": "Difficile",
+   "l_virt": "Virtuose"
+  }
+ },
+ "prices": {
+  "fr": {
+   "yr": "119,99 €",
+   "mo": "19,99 €",
+   "pm": "10,00 €",
+   "rc": "6 331"
+  }
+ },
+ "labelsI18n": {
+  "fr": {
+   "inst": {
+    "piano": "Piano",
+    "violin": "Violon",
+    "sax": "Saxophone",
+    "flute": "Flûte",
+    "recorder": "Flûte à bec",
+    "clarinet": "Clarinette",
+    "guitar": "Guitare",
+    "bass": "Basse",
+    "ukulele": "Ukulélé",
+    "drums": "Batterie",
+    "percussion": "Percussions",
+    "cello": "Violoncelle"
+   },
+   "lvl": {
+    "never": "Je n’ai jamais joué(e)",
+    "beg": "Débutant",
+    "int": "Intermédiaire",
+    "adv": "Difficile",
+    "virt": "Virtuose"
+   }
+  }
+ },
+ "liveUrl": "https://eddieatadapty.github.io/tomplay-flow-rebuild/",
+ "video": "assets/walkthrough.mp4",
+ "poster": "assets/walkthrough-poster.jpg",
+ "compare": {
+  "today": "today",
+  "proposed": "paywall",
+  "kicker": "The paywall, side by side",
+  "title": "Today and proposed.",
+  "sub": "Same pink, same type, same prices.",
+  "todayCap": "rebuilt from your trial page",
+  "rows": [
+   {
+    "h": "Headline",
+    "idea": 1,
+    "was": "Start your 14-day free trial!",
+    "now": "Every piano score, free for 14 days: it names the instrument they picked"
+   },
+   {
+    "h": "Trial",
+    "idea": 2,
+    "was": "One line of terms under the benefits",
+    "now": "Today → cancel any day before day 14 → day 14, as a timeline"
+   },
+   {
+    "h": "Price",
+    "idea": 2,
+    "was": "$119.99/year",
+    "now": "$10.00 a month, billed $119.99 a year after the trial"
+   },
+   {
+    "h": "Proof",
+    "idea": 5,
+    "was": "None on the screen",
+    "now": "4.7 from 7,193 ratings · Yamaha, Kawai & ABRSM, beside the button"
+   },
+   {
+    "h": "Plans",
+    "idea": 4,
+    "was": "Yearly and monthly side by side",
+    "now": "Yearly with the trial; monthly only when they close it"
+   }
+  ],
+  "kept": "Kept: your pink and type, the 14-day free trial, $119.99 and $19.99, and ‘Cancel during the free trial and you won’t be charged’."
+ },
+ "tour": {
+  "introLede": "Five ideas to turn more musicians into subscribers.",
+  "endTitle": "Five ideas, built into your own onboarding.",
+  "segments": [
+   {
+    "id": "welcome",
+    "d": 3700,
+    "tap": [
+     ".s-cta",
+     3200
+    ]
+   },
+   {
+    "id": "instrument",
+    "d": 1800,
+    "st": {
+     "inst": ""
+    },
+    "tap": [
+     "[data-pick=\"inst:piano\"]",
+     1300
+    ]
+   },
+   {
+    "id": "instrument",
+    "d": 700,
+    "st": {
+     "inst": "piano"
+    }
+   },
+   {
+    "id": "level",
+    "d": 1800,
+    "st": {
+     "lvl": ""
+    },
+    "tap": [
+     "[data-pick=\"lvl:beg\"]",
+     1300
+    ]
+   },
+   {
+    "id": "level",
+    "d": 600,
+    "st": {
+     "lvl": "beg"
+    }
+   },
+   {
+    "id": "piece",
+    "d": 2600,
+    "st": {
+     "tempo": 117,
+     "playing": false
+    },
+    "tap": [
+     ".s-minus",
+     2100
+    ]
+   },
+   {
+    "id": "piece",
+    "d": 1500,
+    "st": {
+     "tempo": 97
+    },
+    "tap": [
+     ".s-play",
+     1000
+    ]
+   },
+   {
+    "id": "piece",
+    "d": 1900,
+    "st": {
+     "playing": true
+    },
+    "tap": [
+     ".s-cta",
+     1500
+    ]
+   },
+   {
+    "id": "ready",
+    "d": 3700,
+    "reveal": ".s-list",
+    "tap": [
+     ".s-cta",
+     3200
+    ]
+   },
+   {
+    "id": "paywall",
+    "d": 4300,
+    "reveal": ".s-tl",
+    "tap": [
+     ".s-x",
+     3800
+    ]
+   },
+   {
+    "id": "offer",
+    "d": 3400
+   },
+   {
+    "id": "offer",
+    "d": 3000,
+    "end": true
+   }
+  ],
+  "captions": {
+   "welcome": {
+    "n": 5,
+    "t": "Lead with the proof you already have",
+    "l": "Editor’s Choice, 4.7 stars and Yamaha on screen one.",
+    "o": "CR +5–10%",
+    "ol": "to purchase"
+   },
+   "instrument": {
+    "k": "Context",
+    "t": "Your instrument grid, up front",
+    "l": "Twelve of your 26 instruments, one tap."
+   },
+   "level": {
+    "k": "Context",
+    "t": "Their level, in your words",
+    "l": "The question your web sign-up already asks."
+   },
+   "piece": {
+    "n": 3,
+    "t": "Let them play before they pay",
+    "l": "One piece at their level, slowed to their speed.",
+    "o": "CR +5–15%",
+    "ol": "to purchase"
+   },
+   "ready": {
+    "n": 1,
+    "t": "Say their instrument and level back",
+    "l": "Piano, Beginner, and three pieces to start with.",
+    "o": "CR +10–20%",
+    "ol": "to purchase"
+   },
+   "paywall": {
+    "n": 2,
+    "t": "Make the 14 free days the headline",
+    "l": "Today, cancel any day, day 14: $10.00 a month.",
+    "o": "CR +10–15%",
+    "ol": "to trial"
+   },
+   "offer": {
+    "n": 4,
+    "t": "Offer the month to people who close it",
+    "l": "$19.99 a month. No countdown, no fake discount.",
+    "o": "ARPU +5–10%",
+    "ol": "from people who close the paywall"
+   }
+  }
+ },
+ "grounding": "Impact ranges are Adapty’s expected effect from teardowns and A/B tests across 30,000+ subscription apps, not measured lift for Tomplay. They overlap, so they don’t add up.",
+ "sources": [
+  {
+   "group": "Prices",
+   "items": [
+    {
+     "dt": "$119.99 a year · $19.99 a month",
+     "dd": "<a href=\"https://apps.apple.com/us/app/tomplay-sheet-music/id1054809074\" target=\"_blank\" rel=\"noopener\">US App Store listing<\/a> In-App Purchases: Yearly Premium Access $119.99, Monthly Premium Access $19.99. Your listing: ‘Auto-renewing yearly plan (includes the 14-day free trial)’ and a monthly plan."
+    },
+    {
+     "dt": "$10.00 a month",
+     "dd": "$119.99 ÷ 12. Your own trial page says ‘10 US$ per month (billed annually)’."
+    },
+    {
+     "dt": "France: 119,99 € a year · 19,99 € a month",
+     "dd": "<a href=\"https://apps.apple.com/fr/app/partitions-tomplay/id1054809074\" target=\"_blank\" rel=\"noopener\">France App Store listing<\/a> In-App Purchases: Accès annuel Premium 119,99 €, Accès mensuel Premium 19,99 €. 10,00 € a month follows from them."
+    },
+    {
+     "dt": "Not used",
+     "dd": "Other SKUs on the list: Monthly Premium Access $15.99, Premium Access $97.99 and $9.99, Premium Access Teacher/Student $7.99, single Interactive Sheet Music $2.99–$5.99 (France: 15,99 €, 99,99 €, 9,99 €, 7,99 €, 2,99–6,99 €). We couldn’t tell from the listing what they are for."
+    }
+   ]
+  },
+  {
+   "group": "Proof",
+   "items": [
+    {
+     "dt": "4.7 from 7,193 ratings",
+     "dd": "<a href=\"https://apps.apple.com/us/app/tomplay-sheet-music/id1054809074\" target=\"_blank\" rel=\"noopener\">US App Store listing<\/a>, October 2026."
+    },
+    {
+     "dt": "France: 4,7 from 6,331 ratings",
+     "dd": "France App Store listing, October 2026. The French screens use it."
+    },
+    {
+     "dt": "App Store Editor’s Choice · Recommended by Yamaha, Kawai, ABRSM",
+     "dd": "Your first two App Store screenshots; the laurels and partner logos are cut from them."
+    },
+    {
+     "dt": "2 million musicians",
+     "dd": "Your listing: ‘Used by over 2 million musicians and hundreds of music schools worldwide’."
+    }
+   ]
+  },
+  {
+   "group": "Features and copy",
+   "items": [
+    {
+     "dt": "Welcome copy",
+     "dd": "‘Learn and play your favourite music’ and its subline, from your first App Store screenshot."
+    },
+    {
+     "dt": "Select your main instrument",
+     "dd": "Your in-app grid (App Store screenshot 9): the first twelve tiles, their icons and labels."
+    },
+    {
+     "dt": "Select your level",
+     "dd": "The level list on <a href=\"https://tomplay.com/premium-trial\" target=\"_blank\" rel=\"noopener\">tomplay.com/premium-trial<\/a>: I’ve never played, Beginner, Intermediate, Advanced, Virtuoso."
+    },
+    {
+     "dt": "Pieces",
+     "dd": "River Flows In You, Imagine, Perfect, Swan Lake, Take Five and Interstellar are the titles your trial page names. Which arrangement exists for each instrument and level is yours to swap in."
+    },
+    {
+     "dt": "Score, play-along and tempo",
+     "dd": "The score is cut from your ‘Get instant feedback’ screenshot and shown for every piece; the tempo control (117 BPM) follows your ‘Adjust the tempo’ screenshot."
+    },
+    {
+     "dt": "Today’s paywall",
+     "dd": "Rebuilt from <a href=\"https://tomplay.com/premium-trial\" target=\"_blank\" rel=\"noopener\">tomplay.com/premium-trial<\/a> (headline, benefits and terms word for word) and the two plans your listing describes. We haven’t seen the in-app screen."
+    },
+    {
+     "dt": "French copy",
+     "dd": "Your French listing and tomplay.com/fr where they have the line; the rest is our translation, which your own strings replace."
+    }
+   ]
+  },
+  {
+   "group": "Design",
+   "items": [
+    {
+     "dt": "Colours",
+     "dd": "tomplay.com: #E82076 buttons and headings, #F9DEEA light pink, #282828 text. Sampled from your screenshots: #E62075 pink, #FAE9EF selected chip, #C4D5E4 blue circle."
+    },
+    {
+     "dt": "Type",
+     "dd": "Source Sans Pro on tomplay.com; the prototype uses Source Sans 3, its current Google Fonts release."
+    },
+    {
+     "dt": "Art",
+     "dd": "Logo from tomplay.com; instrument icons, laurels, partner logos and the score cut from your App Store screenshots."
+    }
+   ]
+  },
+  {
+   "group": "What we couldn’t see",
+   "items": [
+    {
+     "dt": "Your in-app onboarding and paywall",
+     "dd": "No recording of the iOS flow exists in the libraries we use, so the screens are rebuilt from your listing, site and trial page."
+    },
+    {
+     "dt": "Trial reminders",
+     "dd": "Whether you remind people before day 14. If you do, it belongs on the timeline."
+    },
+    {
+     "dt": "Your test history",
+     "dd": "For example, whether a single-plan paywall or a trial headline has been tested before."
+    },
+    {
+     "dt": "Android and web",
+     "dd": "We looked at the iOS listing and the web trial page only."
+    }
+   ]
+  }
+ ]
+}
+</script>
+
+<script>
+/* Tomplay hooks: per-instrument pieces (named on tomplay.com/premium-trial), level-aware copy, tempo stepper, FR strings. */
+var TP = {
+  pieces: {piano:['River Flows In You','Yiruma'], violin:['Swan Lake','Tchaikovsky'], sax:['Take Five','Brubeck'], flute:['Imagine','John Lennon'],
+    recorder:['Imagine','John Lennon'], clarinet:['Take Five','Brubeck'], guitar:['Perfect','Ed Sheeran'], bass:['Take Five','Brubeck'],
+    ukulele:['Perfect','Ed Sheeran'], drums:['Perfect','Ed Sheeran'], percussion:['Take Five','Brubeck'], cello:['Interstellar','Hans Zimmer']},
+  all: [['River Flows In You','Yiruma'],['Imagine','John Lennon'],['Perfect','Ed Sheeran'],['Swan Lake','Tchaikovsky'],['Take Five','Brubeck'],['Interstellar','Hans Zimmer']],
+  /* every icon path, listed literally so the publish scan finds them */
+  icons: {piano:'assets/crop/inst-piano.png', violin:'assets/crop/inst-violin.png', sax:'assets/crop/inst-sax.png', flute:'assets/crop/inst-flute.png',
+    recorder:'assets/crop/inst-recorder.png', clarinet:'assets/crop/inst-clarinet.png', guitar:'assets/crop/inst-guitar.png', bass:'assets/crop/inst-bass.png',
+    ukulele:'assets/crop/inst-ukulele.png', drums:'assets/crop/inst-drums.png', percussion:'assets/crop/inst-percussion.png', cello:'assets/crop/inst-cello.png'},
+  low: {en: {piano:'piano', violin:'violin', sax:'saxophone', flute:'flute', recorder:'recorder', clarinet:'clarinet', guitar:'guitar', bass:'bass', ukulele:'ukulele', drums:'drum', percussion:'percussion', cello:'cello'},
+        fr: {piano:'de piano', violin:'de violon', sax:'de saxophone', flute:'de flûte', recorder:'de flûte à bec', clarinet:'de clarinette', guitar:'de guitare', bass:'de basse', ukulele:'de ukulélé', drums:'de batterie', percussion:'de percussions', cello:'de violoncelle'}},
+  arrInst: {fr: {piano:'piano', violin:'violon', sax:'saxophone', flute:'flûte', recorder:'flûte à bec', clarinet:'clarinette', guitar:'guitare', bass:'basse', ukulele:'ukulélé', drums:'batterie', percussion:'percussions', cello:'violoncelle'}},
+  lvl: {en: {never:'Complete beginner', beg:'Beginner', int:'Intermediate', adv:'Advanced', virt:'Virtuoso'},
+        fr: {never:'Débutant complet', beg:'Débutant', int:'Intermédiaire', adv:'Difficile', virt:'Virtuose'}},
+  ticks: {
+    en: {start: ['Visual guide: the right notes and fingerings in real time', 'Note names under every note', 'Note by note: the score waits for the right note'],
+         more:  ['Play along with backing tracks by professional musicians', 'Slow down or speed up the tempo', 'Loop a section until you’ve mastered it']},
+    fr: {start: ['Guide visuel : les bonnes notes et doigtés en temps réel', 'Le nom de chaque note affiché', 'Note par note : la partition avance quand vous jouez la bonne note'],
+         more:  ['Jouez avec des accompagnements de musiciens professionnels', 'Ralentissez ou accélérez le tempo', 'Répétez une section en boucle jusqu’à la maîtriser']}
+  },
+  t: {
+    en: {ph: function(i){ return 'Every ' + i + ' score, <em>free for 14 days</em>'; }, rh: function(i){ return 'Your ' + i + ' sheet music is ready'; },
+         arr: 'Arranged for ', pst0: 'Play along', pl0: 'Backing tracks recorded by professional musicians', pst1: function(b){ return 'Playing at ' + b + ' BPM'; }, pl1: 'The score scrolls with the music', rate: '4.7'},
+    fr: {ph: function(i){ return 'Toutes les partitions ' + i + ', <em>14 jours offerts</em>'; }, rh: function(i){ return 'Vos partitions ' + i + ' sont prêtes'; },
+         arr: 'Arrangé pour ', pst0: 'Jouez avec accompagnement', pl0: 'Accompagnements enregistrés par des musiciens professionnels', pst1: function(b){ return 'Lecture à ' + b + ' BPM'; }, pl1: 'La partition défile avec la musique', rate: '4,7'}
+  }
+};
+function tpQ(sel){ return document.querySelectorAll('.phone ' + sel); }
+function tpSet(sel, html){ tpQ(sel).forEach(function(e){ e.innerHTML = html; }); }
+window.onSync = function(S){
+  var L = S.lang === 'fr' ? 'fr' : 'en', T = TP.t[L], inst = S.inst || 'piano', lv = S.lvl || 'beg';
+  var low = TP.low[L][inst], p = TP.pieces[inst], lvl = TP.lvl[L][lv];
+  var arrI = L === 'fr' ? TP.arrInst.fr[inst] : (C.labels.inst[inst] || 'Piano');
+  tpSet('.dyn-ph', T.ph(low)); tpSet('.dyn-rh', T.rh(low));
+  tpSet('.dyn-piece', p[0]); tpSet('.dyn-comp', p[1]); tpSet('.dyn-arr', T.arr + arrI + ' · ' + lvl);
+  tpSet('.dyn-rlvl', lvl);
+  tpQ('.dyn-ricon').forEach(function(e){ e.src = TP.icons[inst]; });
+  var list = [p].concat(TP.all.filter(function(x){ return x[0] !== p[0]; }).slice(0, 2));
+  var NOTE = '<i><svg viewBox="0 0 24 24"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg></i>';
+  tpSet('.dyn-list', list.map(function(x){ return '<div class="s-piece">' + NOTE + '<div><b>' + x[0] + '</b><small>' + x[1] + ' · ' + lvl + '</small></div></div>'; }).join(''));
+  var tk = TP.ticks[L][lv === 'never' || lv === 'beg' ? 'start' : 'more'];
+  tpSet('.dyn-ticks', tk.map(function(x){ return '<li>' + x + '</li>'; }).join(''));
+  var b = S.tempo || 117, f = Math.max(0, Math.min(1, (b - 40) / 120)) * 100;
+  tpQ('.dyn-fill').forEach(function(e){ e.style.width = f + '%'; });
+  tpQ('.dyn-knob').forEach(function(e){ e.style.left = f + '%'; });
+  tpSet('.dyn-pst', S.playing ? T.pst1(b) : T.pst0); tpSet('.dyn-pline', S.playing ? T.pl1 : T.pl0);
+  tpQ('.ic-play').forEach(function(e){ e.style.display = S.playing ? 'none' : ''; });
+  tpQ('.ic-pause').forEach(function(e){ e.style.display = S.playing ? '' : 'none'; });
+  tpSet('.w-rate', T.rate + ' ★'); tpSet('.w-rate2', T.rate);
+};
+/* the piece starts fresh every time it is entered (a hero still shows it playing, slowed down) */
+window.onEnter = function(id, S){
+  if (id === 'piece' && !SHOT) { S.tempo = 117; S.playing = false; sync(); }
+  tpSbar();
+};
+function tpSbar(){ var sb = document.querySelector('.phone .sbar'); if (sb) sb.style.color = cur === 'welcome' ? '#fff' : ''; }
+document.addEventListener('click', function(e){
+  var m = e.target.closest('.phone .s-minus, .phone .s-plus, .phone .s-play'); if (!m) return;
+  if (m.classList.contains('s-play')) S.playing = !S.playing;
+  else S.tempo = Math.max(40, Math.min(160, (S.tempo || 117) + (m.classList.contains('s-plus') ? 5 : -5)));
+  sync();
+});
+</script>
+<script>
+/* ============ engine — generic, do not fork per app ============ */
+var C = JSON.parse(document.getElementById('content').textContent);
+var S = C.state, scr = {}, ORDER = [], hist = [], cur = null, Q = location.search;
+var SHOT = /[?&](shot|phone|tour)\b/.test(Q), HERO = /[?&]hero\b/.test(Q);
+/* a screen with data-aside (e.g. the paywall TODAY for the side-by-side) renders for stills but is not part of the flow */
+document.querySelectorAll('.scr').forEach(function(s){ scr[s.dataset.id] = s; if (!s.hasAttribute('data-aside')) ORDER.push(s.dataset.id); });
+if (/[?&]shot\b/.test(Q)) document.documentElement.classList.add('shot');
+if (/[?&]phone\b/.test(Q)) document.documentElement.classList.add('shot', 'phoneonly');
+if (/[?&]clear\b/.test(Q)) document.documentElement.classList.add('clear');
+var IDEAS = (C.ideas || []).length;
+
+/* ---- languages: markup is the first language; C.i18n[lang][data-t key] the others; {tokens} from C.prices[lang] ---- */
+var LANGS = C.langs || [], BASE = LANGS.length ? LANGS[0].code : 'en', LANG_DONE = BASE, BASE_LABELS = JSON.parse(JSON.stringify(C.labels || {}));
+if (!S.lang) S.lang = BASE;
+function fillP(s, l){ var P = (C.prices || {})[l] || {}; return String(s).replace(/\{(\w+)\}/g, function(m, k){ return k in P ? P[k] : m; }); }
+function applyLang(){
+  var l = S.lang || BASE; if (l === LANG_DONE) return;
+  var T = (C.i18n || {})[l] || {};
+  document.querySelectorAll('.phone [data-t]').forEach(function(el){
+    if (el._base == null) el._base = el.innerHTML;
+    el.innerHTML = l === BASE || T[el.dataset.t] == null ? el._base : fillP(T[el.dataset.t], l);
+  });
+  C.labels = JSON.parse(JSON.stringify(BASE_LABELS));
+  var LL = (C.labelsI18n || {})[l] || {}; Object.keys(LL).forEach(function(k){ C.labels[k] = LL[k]; });
+  LANG_DONE = l;
+}
+function setLang(l){
+  if (!LANGS.some(function(x){ return x.code === l; })) return;
+  S.lang = l; sync();
+  document.querySelectorAll('[data-setlang]').forEach(function(b){ b.classList.toggle('on', b.dataset.setlang === l); });
+  if (window.onLang) window.onLang(l);
+}
+
+function lab(key){ var v = S[key]; var L = C.labels[key]; if (Array.isArray(v)) return v.map(function(x){ return L && L[x] || x; }).join(', '); return (L && L[v]) || v; }
+function sync(){
+  applyLang();
+  document.querySelectorAll('[data-bind]').forEach(function(el){
+    var b = el.dataset.bind, m = b.split(':');
+    el.textContent = m[0] === 'label' ? lab(m[1]) : m[0] === 'count' ? (S[m[1]] || []).length : (S[b] == null ? '' : S[b]);
+  });
+  document.querySelectorAll('[data-pick]').forEach(function(el){ var p = el.dataset.pick.split(':'); el.classList.toggle('on', S[p[0]] === p[1]); });
+  document.querySelectorAll('[data-toggle]').forEach(function(el){ var p = el.dataset.toggle.split(':'); el.classList.toggle('on', (S[p[0]] || []).indexOf(p[1]) > -1); });
+  document.querySelectorAll('[data-requires]').forEach(function(el){ el.disabled = !(S[el.dataset.requires] || []).length; });
+  document.querySelectorAll('[data-show]').forEach(function(el){ var p = el.dataset.show.split(':'); el.style.display = String(S[p[0]]) === p[1] ? '' : 'none'; });
+  if (window.onSync) window.onSync(S);
+}
+function show(id, dir){
+  var from = scr[cur], to = scr[id]; if (!to || id === cur) return;
+  var sheet = to.classList.contains('sheet');
+  if (from){
+    from.classList.remove('is-active');
+    if (sheet) from.classList.add('under');                                   /* a sheet slides up over the screen that opened it */
+    else if (dir === 'fwd' && !from.classList.contains('sheet')) from.classList.add('is-past');
+  }
+  if (!sheet) Object.keys(scr).forEach(function(k){ var u = scr[k]; if (u !== to && u.classList.contains('under')) { u.classList.remove('under'); if (dir === 'fwd') u.classList.add('is-past'); } });
+  to.classList.remove('is-past', 'under'); to.classList.add('is-active'); cur = id;
+  paint(); if (window.onEnter) window.onEnter(id, S);
+}
+function go(id){ if (cur) hist.push(cur); show(id, 'fwd'); }
+function back(){ if (hist.length) { var p = hist.pop(); scr[cur].classList.remove('is-active'); show(p, 'back'); } }
+function jump(id){
+  Object.keys(scr).forEach(function(k){ scr[k].classList.add('nofx'); scr[k].classList.remove('is-active', 'is-past', 'under'); });
+  var i = ORDER.indexOf(id); hist = ORDER.slice(0, i < 0 ? 0 : i); cur = null;
+  ORDER.slice(0, i).forEach(function(k){ if (!scr[k].classList.contains('sheet')) scr[k].classList.add('is-past'); });
+  if (scr[id] && scr[id].classList.contains('sheet')) {                        /* jumping to a sheet: its opener stays visible under it */
+    for (var j = i - 1; j >= 0; j--) if (!scr[ORDER[j]].classList.contains('sheet')) { scr[ORDER[j]].classList.remove('is-past'); scr[ORDER[j]].classList.add('under'); break; }
+  }
+  show(id, 'jump');
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ Object.keys(scr).forEach(function(k){ scr[k].classList.remove('nofx'); }); }); });
+}
+function stepBy(d){ var i = ORDER.indexOf(cur) + d; if (i >= 0 && i < ORDER.length) jump(ORDER[i]); }
+function jumpTo(id){
+  var p = document.getElementById('prototype');
+  if (p && !document.documentElement.classList.contains('appmode')) p.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+  jump(id);
+}
+function paint(){
+  sync();
+  var c = document.getElementById('chips');
+  if (!c.childElementCount) ORDER.forEach(function(id){
+    var p = C.panel[id] || {}, b = document.createElement('button');
+    b.className = 'au-chip'; b.type = 'button'; b.dataset.id = id; b.setAttribute('role', 'tab');
+    b.innerHTML = (p.idea ? '<i>' + p.idea + '</i>' : '') + ((C.chips && C.chips[id]) || id);
+    b.onclick = function(){ jump(id); };
+    c.appendChild(b);
+  });
+  c.querySelectorAll('.au-chip').forEach(function(b){ var on = b.dataset.id === cur; b.classList.toggle('on', on); b.setAttribute('aria-selected', on); });
+  var d = C.panel[cur] || {t: cur, why: ''}, n = ORDER.indexOf(cur) + 1;
+  document.getElementById('panel').innerHTML =
+    (d.idea ? '<div class="au-pn-k"><i></i>Idea ' + d.idea + ' of ' + IDEAS + '</div>' : '<div class="au-pn-k au-ctx"><i></i>Context</div>') +
+    '<h3 class="au-pn-t">' + d.t + '</h3><p class="au-pn-h">' + d.why + '</p>' +
+    (d.iv ? '<div class="au-pn-o"><div class="au-lab">Potential outcome · based on Adapty data</div><div class="au-val"><mark>' + d.iv + '</mark></div><div class="au-sub">' + (d.il || '') + '</div></div>' : '') +
+    (d.also ? '<p class="au-pn-a">' + d.also + '</p>' : '') +
+    '<div class="au-pn-nav"><button type="button" onclick="stepBy(-1)"' + (n <= 1 ? ' disabled' : '') + '>‹ Previous</button><span>Screen ' + n + ' of ' + ORDER.length + '</span><button type="button" onclick="stepBy(1)"' + (n === ORDER.length ? ' disabled' : '') + '>Next ›</button></div>';
+  var ab = document.getElementById('abT'); if (ab) ab.textContent = (d.idea ? 'Idea ' + d.idea + ' of ' + IDEAS + ' · ' : '') + (d.t || '');
+}
+document.addEventListener('click', function(e){
+  var j = e.target.closest('[data-jumpto]'); if (j){ e.preventDefault(); jumpTo(j.dataset.jumpto); return; }
+  var L = e.target.closest('[data-setlang]'); if (L){ setLang(L.dataset.setlang); return; }
+  if (e.target.closest('[data-langtoggle]') && LANGS.length > 1){ var k = LANGS.findIndex(function(x){ return x.code === S.lang; }); setLang(LANGS[(k + 1) % LANGS.length].code); return; }
+  var el = e.target.closest('[data-go],[data-back],[data-pick],[data-toggle]'); if (!el) return;
+  if (el.dataset.pick){ var p = el.dataset.pick.split(':'); S[p[0]] = p[1]; sync(); if (el.dataset.advance) setTimeout(function(){ go(el.dataset.advance); }, 170); return; }
+  if (el.dataset.toggle){ var q = el.dataset.toggle.split(':'), a = S[q[0]] = S[q[0]] || [], i = a.indexOf(q[1]); if (i > -1) a.splice(i, 1); else a.push(q[1]); sync(); return; }
+  if ('back' in el.dataset) return back();
+  go(el.dataset.go);
+});
+document.querySelectorAll('[data-input]').forEach(function(inp){
+  inp.value = S[inp.dataset.input] || ''; inp.addEventListener('input', function(){ S[inp.dataset.input] = inp.value.trim() || 'there'; sync(); });
+});
+function $(id){ return document.getElementById(id); }
+
+/* hero stills, shortlist, outcome, sources — from CONTENT */
+$('heroPhones').innerHTML = (C.hero || []).map(function(id, i){
+  var pos = ['l', 'c', 'r'][i] || 'r', t = (C.chips && C.chips[id]) || id;
+  return '<button class="au-hp au-' + pos + '" data-jumpto="' + id + '" aria-label="Open ' + t + '"><img src="assets/hero/' + id + '.png" alt=""></button>';
+}).join('');
+$('ideaList').innerHTML = (C.ideas || []).map(function(r, i){
+  return '<article class="au-idea"><div class="au-num">0' + (i + 1) + '</div><div><h3>' + r.title + '</h3><p>' + r.what + '</p>' +
+    '<button type="button" class="au-lnk" data-jumpto="' + r.screen + '">See it on the screen</button></div>' +
+    '<div class="au-imp"><div class="au-v"><mark>' + r.impact + '</mark></div><div class="au-l">' + r.il + '</div></div></article>';
+}).join('');
+var O = C.outcome || {};
+$('bandNums').innerHTML =
+  (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') +
+  (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '');
+$('bandFn').textContent = C.grounding;
+$('fine').textContent = C.grounding + ' Prepared by Adapty.';
+$('srcBody').innerHTML = C.sources.map(function(g){
+  return '<div><h4>' + g.group + '</h4><dl>' + g.items.map(function(it){ return '<dt>' + it.dt + '</dt><dd>' + it.dd + '</dd>'; }).join('') + '</dl></div>';
+}).join('');
+function openSrc(){ var d = $('srcDetails'); d.open = true; d.scrollIntoView({block: 'start'}); }
+
+/* ---- extras: language control, the paywall side by side, QR / phone view, the video ---- */
+if (LANGS.length > 1) {
+  $('langRow').hidden = false;
+  var lb = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.name + '</button>'; }).join('');
+  $('langSw').innerHTML = lb;
+  $('abLang').innerHTML = LANGS.map(function(x){ return '<button type="button" data-setlang="' + x.code + '">' + x.code.toUpperCase() + '</button>'; }).join('');
+}
+var CM = C.compare;
+if (CM && scr[CM.today] && scr[CM.proposed]) {
+  $('compare').hidden = false; $('navCompare').hidden = false;
+  $('cmpBody').innerHTML = '<div class="au-ideas-h"><p class="au-kicker">' + (CM.kicker || 'The paywall, side by side') + '</p><h2 class="au-h2">' + (CM.title || 'Today and proposed.') + (CM.sub ? ' <span>' + CM.sub + '</span>' : '') + '</h2></div>' +
+    '<div class="au-cmp"><figure><img src="assets/hero/' + CM.today + '.png" alt="Your paywall today"><figcaption>Today <span>· ' + (CM.todayCap || 'rebuilt from your recording') + '</span></figcaption></figure>' +
+    '<ol class="au-chg">' + (CM.rows || []).map(function(r){
+      return '<li><h4>' + r.h + (r.idea ? ' <i>Idea ' + r.idea + '</i>' : '') + '</h4><span class="au-was"><em>Today</em>' + r.was + '</span><span class="au-now"><em>Proposed</em>' + r.now + '</span></li>';
+    }).join('') + '</ol>' +
+    '<figure><button type="button" class="au-cmp-go" data-jumpto="' + CM.proposed + '" aria-label="Open the proposed paywall"><img src="assets/hero/' + CM.proposed + '.png" alt="The proposed paywall"></button><figcaption>Proposed <span>· tap to try it</span></figcaption></figure></div>' +
+    (CM.kept ? '<p class="au-kept">' + CM.kept + '</p>' : '');
+}
+if (C.liveUrl) { $('qrCard').hidden = false; $('qrMob').hidden = false; }
+if (/[?&]app\b/.test(Q)) {
+  var H0 = document.documentElement; H0.classList.add('appmode');
+  var openP = function(o){ H0.classList.toggle('au-open', o); $('abWhy').querySelector('em').textContent = o ? 'Close ↓' : 'Why ↑'; };
+  $('abWhy').onclick = function(){ openP(!H0.classList.contains('au-open')); };
+  $('abScrim').onclick = function(){ openP(false); };
+}
+if (C.video) {
+  var dlg = $('vid'), vel = $('vidEl'); vel.src = C.video; if (C.poster) vel.poster = C.poster; $('vidDl').href = C.video;
+  $('heroVideo').hidden = false;
+  $('heroVideo').onclick = function(){ dlg.showModal(); vel.play().catch(function(){}); };
+  $('vidX').onclick = function(){ dlg.close(); };
+  dlg.addEventListener('close', function(){ vel.pause(); });
+  dlg.addEventListener('click', function(e){ if (e.target === dlg) dlg.close(); });
+}
+
+/* ---- ?tour: a deterministic walkthrough from C.tour — tourAt(ms) paints one frame; record-video.sh records it ---- */
+function tourInit(){
+  var T = C.tour, H = document.documentElement, TR = T.transition || 360;
+  H.classList.add('tourmode', 'shot'); document.body.classList.add('nofx');
+  var SEG = T.segments, START = [], STATE = [], UNDER = [], acc = 0, st = JSON.parse(JSON.stringify(C.state));
+  SEG.forEach(function(s, i){
+    START.push(acc); acc += s.d;
+    Object.keys(s.st || {}).forEach(function(k){ st[k] = s.st[k]; }); STATE.push(JSON.parse(JSON.stringify(st)));
+    var u = null; if (scr[s.id].classList.contains('sheet')) for (var j = i - 1; j >= 0; j--) if (!scr[SEG[j].id].classList.contains('sheet')) { u = SEG[j].id; break; }
+    UNDER.push(u);
+  });
+  var TOTAL = acc, capEl = $('tCap'), tap = $('tTap'), pressed = null, popped = [];
+  $('tIntro').innerHTML = '<p class="au-eyebrow"><i></i>' + document.querySelector('.au-top-hero .au-eyebrow').textContent + '</p><h1 class="au-display">' + C.app + '</h1>' +
+    '<p class="au-lede">' + (T.introLede || document.querySelector('.au-top-hero .au-lede').innerHTML) + '</p>';
+  $('tEnd').innerHTML = '<p class="au-eyebrow"><i></i>Growth Audit · ' + C.app + '</p><h2 class="au-te-h">' + (T.endTitle || 'Five ideas, built into your own onboarding.') + '</h2>' +
+    '<div class="au-te-n">' + (O.cr ? '<div><small>up to</small><b>' + O.cr + '</b><span>CR to purchase</span></div>' : '') + (O.arpu ? '<div><small>up to</small><b>' + O.arpu + '</b><span>ARPU</span></div>' : '') + '</div>' +
+    (C.liveUrl ? '<div class="au-te-q"><img src="assets/qr-app.png" alt=""><div><b>Try it on your phone</b><span>' + C.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') + '</span></div></div>' : '') +
+    '<p class="au-te-f">' + C.grounding + '</p>';
+  function ease(x){ return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; }
+  function easeBack(x){ var c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); }
+  function capHTML(c){
+    c = c || {k: '', t: '', l: ''};
+    return '<div class="au-tk' + (c.n ? '' : ' au-ctx') + '"><i></i>' + (c.n ? 'Idea ' + c.n + ' of ' + IDEAS : (c.k || 'Context')) + '</div><h2 class="au-tt">' + c.t + '</h2><p class="au-tl">' + (c.l || '') + '</p>' +
+      (c.o ? '<div class="au-to"><small>Potential outcome · based on Adapty data</small><b><mark>' + c.o + '</mark></b><span>' + (c.ol || '') + '</span></div>' : '');
+  }
+  function place(id, tf, z){ scr[id].style.transform = tf; scr[id].style.zIndex = z; }
+  window.TOUR_MS = TOTAL;
+  window.tourAt = function(ms){
+    ms = Math.max(0, Math.min(TOTAL - 1, ms));
+    var i = 0; while (i < SEG.length - 1 && ms >= START[i + 1]) i++;
+    var s = SEG[i], local = ms - START[i], prev = i > 0 ? SEG[i - 1] : null;
+    Object.keys(STATE[i]).forEach(function(k){ S[k] = STATE[i][k]; }); sync();
+    var moving = prev && prev.id !== s.id && local < TR, p = moving ? ease(local / TR) : 1;
+    Object.keys(scr).forEach(function(k){ scr[k].classList.remove('is-active', 'is-past', 'under'); place(k, 'translateX(100%)', 0); });
+    var B = scr[s.id];
+    if (moving) {
+      if (B.classList.contains('sheet')) { place(prev.id, 'none', 1); B.style.transform = 'translateY(' + (1 - p) * 100 + '%)'; }
+      else {
+        var slide = 'translateX(' + (-28 * p) + '%)'; place(prev.id, slide, 1); B.style.transform = 'translateX(' + (1 - p) * 100 + '%)';
+        if (UNDER[i - 1]) place(UNDER[i - 1], slide, 0);
+      }
+    } else B.style.transform = 'none';
+    B.style.zIndex = 2;
+    if (UNDER[i] && !moving) place(UNDER[i], 'none', 1);
+    /* optional reveal: s.pop scales an element in, s.reveal fades one in a beat later */
+    popped.forEach(function(e){ e.style.transform = ''; e.style.opacity = ''; }); popped = [];
+    var q = Math.max(0, Math.min(1, (local - 250) / 550));
+    if (s.pop) { var pe = B.querySelector(s.pop); if (pe) { pe.style.transform = 'scale(' + (.55 + .45 * easeBack(q)) + ')'; pe.style.opacity = Math.min(1, q * 1.6); popped.push(pe); } }
+    if (s.reveal) { var re = B.querySelector(s.reveal); if (re) { re.style.opacity = Math.max(0, Math.min(1, (local - 520) / 300)); popped.push(re); } }
+    /* caption crossfades at screen changes; waits for the intro, gives way to the end card */
+    var key = s.id, op = 1;
+    if (moving) { if (p < .5) { key = prev.id; op = 1 - p * 2; } else op = p * 2 - 1; }
+    if (capEl.dataset.k !== key) { capEl.innerHTML = capHTML(T.captions[key]); capEl.dataset.k = key; }
+    var io = ms < 1100 ? 1 : Math.max(0, 1 - (ms - 1100) / 300), eo = s.end ? Math.min(1, local / 350) : 0;
+    capEl.style.opacity = op * Math.max(0, Math.min(1, (ms - 1400) / 300)) * (1 - eo);
+    /* the finger: fades in, taps, ripples out. Selectors are scoped to the screen */
+    tap.style.opacity = 0; if (pressed) { pressed.style.opacity = ''; pressed = null; }
+    if (s.tap) {
+      var el = B.querySelector(s.tap[0]), dt = local - s.tap[1];
+      if (el && dt > -260 && dt < 420) {
+        var r = el.getBoundingClientRect();
+        tap.style.left = (r.left + r.width / 2) + 'px'; tap.style.top = (r.top + r.height / 2) + 'px';
+        if (dt < 0) { tap.style.opacity = (dt + 260) / 260 * .9; tap.style.transform = 'scale(1)'; }
+        else { tap.style.opacity = .9 * (1 - dt / 420); tap.style.transform = 'scale(' + (1 + dt / 420 * .9) + ')'; }
+        if (dt >= 0 && dt < 160) { el.style.opacity = .72; pressed = el; }
+      }
+    }
+    $('tIntro').style.opacity = T.intro === false ? 0 : io;
+    $('tEnd').style.opacity = eo;
+    $('tProg').style.width = (ms / TOTAL * 100) + '%';
+    cur = s.id;
+    return i;
+  };
+  var tm = /[?&]t=(\d+)/.exec(Q); tourAt(tm ? +tm[1] : 0);
+}
+
+/* boot: #<screen-id> deep-links a screen (shoot.sh / hero-stills.sh use it); ?lang=xx picks the language */
+(function(){
+  var lm = /[?&]lang=(\w+)/.exec(Q); if (lm) setLang(lm[1]); else setLang(S.lang);
+  var h = location.hash.slice(1);
+  jump(scr[h] ? h : ORDER[0]);
+  if (scr[h] && !SHOT && !document.documentElement.classList.contains('appmode')) setTimeout(function(){ $('prototype').scrollIntoView(); }, 0);
+  if (/[?&]tour\b/.test(Q) && C.tour) tourInit();
+})();
+</script>
+<script>
+/* after boot: hero stills show the piece playing, slowed down; the status bar turns white on the pink welcome (also in ?tour frames) */
+if (HERO) { S.tempo = 97; S.playing = true; sync(); }
+if (window.tourAt) { var tpTour = window.tourAt; window.tourAt = function(ms){ var i = tpTour(ms); tpSbar(); return i; }; }
+tpSbar();
+</script>
+</body>
+</html>
